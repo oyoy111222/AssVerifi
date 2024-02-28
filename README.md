@@ -22,4 +22,5 @@
 * 安装Coq 下载地址：https://coq.inria.fr/download  
   完成安装后，需要配置Coq的环境变量：
 * 打开环境变量
-![image](https://github.com/oyoy111222/AssVerifi/assets/72786551/b45cbb45-33ee-4689-a80b-976ba55ac28f)
+![image](https://github.com/oyoy111222/AssVerifi/assets/72786551/00949ad9-ca79-4ad5-9869-a6d6e937f71e)
+
