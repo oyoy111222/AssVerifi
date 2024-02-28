@@ -5,8 +5,20 @@
 事实上，我们基于分离逻辑的思想，一个可用于分析和验证航空保障模型下作业规划方案正确性的交互式Coq证明辅助工具。它涉及到构建语法、定义语义、航空保障系统计算状态五元组和推理规则等环节。这些环节与工程文件的对应关系如下
 * 构建语法--language.v
 * 定义语义--semantic.v
-弹药保障系统计算状态五元组和推理规则--state.v removestatehv.v SafeinHt.V SafeinSs.v
-验证实例--方案部署（Asgns1.v）+方案实施（AsgnComps1.v）+资源泄露情形（Asgns2.v Asgns2Abt1.v Asgns2Abt2.v） 此外，还有一些支持工具开发的文件
-基本引理--Aid.v util.v
-变量符号--CSSsVerification.v
-资源互不相等--Neqdefinition.v
+* 航空保障系统计算状态五元组和推理规则--state.v、SafeinHr.V
+* 验证实例--三舰载机运行流程案例（Example_Three.v）+舰载机运行不满足约束情况案例（Example_Abt.v） 此外，还有一些支持工具开发的文件。
+* 约束函数--function.v
+* 基本引理--Aid.v、util.v
+* 变量符号--三舰载机运行流程案例变量（CSSsVerification.v）、舰载机运行不满足约束情况案例变量（CSSsVerification2.v）
+* 资源互不相等--NeqDefinition.v
+工具实现共涉及10315行代码，其中包括138条定义和93条引理
+## 工具开发环境
+* 操作系统：Windows 11
+* Coq版本：Coq 8.17.2023.08
+## 工具的编译方式
+### 1.下载压缩包文件到本地，并解压缩
+**注意：** 解压缩后的文件路径，不可以有中文！
+### 2.安装Coq8.17.2023.08并配置环境变量
+* 安装Coq 下载地址：https://coq.inria.fr/download  
+  完成安装后，需要配置Coq的环境变量：
+* 打开环境变量
