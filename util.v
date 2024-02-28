@@ -38,7 +38,6 @@ Definition tuple2_modify_second_element (p : tuple2) (new_value : nat) : tuple2 
   | Pair2 x _ => Pair2 x new_value
   end.
 
-
 (* 定义三元组类型 *)
 Inductive tuple3 : Type :=
   | Triple3 : nat -> nat -> nat -> tuple3.
@@ -78,7 +77,6 @@ Definition triple3_modify_third_element (t : tuple3) (new_value : nat) : tuple3 
   match t with
   | Triple3 x y _ => Triple3 x y new_value
   end.
-
 
 (* 定义四元组类型 *)
 Inductive tuple4 : Type :=
@@ -131,7 +129,6 @@ Definition triple4_modify_fourth_element (t : tuple4) (new_value : nat) : tuple4
   match t with
   | Triple4 x y z _ => Triple4 x y z new_value
   end.
-
 
 Definition beq_id id1 id2 :=
   match id1,id2 with
@@ -193,7 +190,6 @@ Proof.
   intro. subst.
   apply H. trivial.
 Qed.
-
 
 Definition option_elim (d : nat) (o : option nat) : nat :=
   match o with
