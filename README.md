@@ -22,5 +22,10 @@
 * 安装Coq 下载地址：https://coq.inria.fr/download  
   完成安装后，需要配置Coq的环境变量：
 * 打开环境变量
-![image](https://github.com/oyoy111222/AssVerifi/assets/72786551/00949ad9-ca79-4ad5-9869-a6d6e937f71e)
+![image](https://github.com/oyoy111222/AssVerifi/assets/72786551/c4d67ad5-ae64-4351-8004-4bb13aa537b1)
+* 在系统变量的Path一栏中，添加Coq的安装路径
+![image](https://github.com/oyoy111222/AssVerifi/assets/72786551/16cb2dd1-59f8-4361-b1c1-915748f2cf21)
+### 3.使用CoqIDE审阅相应代码
+
+
 
