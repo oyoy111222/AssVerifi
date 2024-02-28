@@ -112,8 +112,6 @@ Definition o2v (m:option nat) : nat :=
 Definition v2o (m:nat) : option nat :=
   Some m. 
 
-
-
 (* 移除列表中指定loc位置的元素 *)
 Fixpoint remove_at (n : nat) (li : list nat) : list nat :=
   match n, li with
