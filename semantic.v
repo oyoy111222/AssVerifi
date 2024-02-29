@@ -521,28 +521,11 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
 
 
 (*资源指令*)
-| E_Rallocate : forall stoO stoV stoS hR hO b e oe n bloc loc,
-              aeval stoV e = n ->
-              hR loc = None ->
-              hO bloc = None ->
-              ceval (CRalloc b e) (stoO, stoV, stoS, hR, hO)
-                    (St ((oe!so-> bloc;stoO), (b !sv-> n; stoV), stoS,
-                      (loc !hr-> n;hR), (bloc !ho-> [v2o loc];hO)))
-
 | E_Rnew : forall stoO stoV stoS hR hO b loc bloc,
               hO loc = None ->
               ceval (CRnew b) (stoO, stoV, stoS, hR, hO)
                     (St (stoO, (b !sv-> bloc; stoV), stoS, 
                           hR, (loc !ho-> [v2o bloc];hO)))
-
-| E_Rappend : forall stoO stoV stoS hR hO  bk e n loc bloc llist,
-              (oeval stoO stoV stoS bk) = Some bloc ->
-              hO bloc = Some llist ->
-              (forall l, in_list llist l = true -> exists k, hR (o2v l) = k) ->
-              aeval stoV e = n ->
-              hR loc = None ->
-              ceval (CRappend bk e) (stoO, stoV, stoS, hR, hO)
-                    (St (stoO, stoV, stoS, (loc !hr-> n;hR), (bloc !ho-> llist ++ [(v2o loc)];hO)))
 
 | E_Rsize : forall stoO stoV stoS hR hO bk x bloc llist m,
               (reval stoO stoV hO bk) = Some bloc ->
