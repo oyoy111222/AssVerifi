@@ -114,8 +114,8 @@ Fixpoint wrap_with_option {A : Type} (lst : list A) : list (option A) :=
 Fixpoint seval (stoO:storeO) (stoV:storeV) 
                 (stoS:storeS) (se:sexp) : list nat :=
 match se with
-| SNull => []
-| SFin =>  [0] (* 使用[0]代表某个特定的值，表示完成*)
+| SNull => null
+| SFin =>  on (* 使用[0]代表某个特定的值，表示完成*)
 | SId name => stoS name
   | SOattach se1 oe2 => 
     match (seval stoO stoV stoS se1, option_nat_to_nat(oeval stoO stoV stoS oe2)) with
