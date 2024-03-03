@@ -119,8 +119,9 @@ Proof.
    apply sym_not_eq; apply Hr3_7.
    apply sym_not_eq; apply Hr2_7.
    apply sym_not_eq; apply Hr1_7.
-   rewrite sO_update_neq. reflexivity.
-   discriminate.
+   rewrite hO_update_neq.
+   reflexivity.
+   auto.
 
    eapply E_Seq.
    eapply E_Oplan_QYC with (loc := oloc_3) (loc1 := rloc_8) (loc2 := rloc_9).
@@ -156,11 +157,10 @@ Proof.
    apply sym_not_eq; apply Hr7_9.
    apply sym_not_eq; apply Hr6_9.
    apply sym_not_eq; apply Hr5_9.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
+   rewrite hO_update_neq.
+   rewrite hO_update_neq.
    reflexivity.
-   discriminate.
-   discriminate.
+   auto. auto.
 
    eapply E_Seq.
    eapply E_Oplan_TF with (loc := oloc_4) (loc1 := rloc_10) (loc2 := rloc_11)(loc3 := rloc_12).
@@ -224,13 +224,11 @@ Proof.
    apply sym_not_eq; apply Hr5_12.
    apply sym_not_eq; apply Hr9_12.
    apply sym_not_eq; apply Hr8_12.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
+   rewrite hO_update_neq.
+   rewrite hO_update_neq.
+   rewrite hO_update_neq.
    reflexivity.
-   discriminate.
-   discriminate.
-   discriminate.
+   auto. auto. auto.
 
    eapply E_Seq.
    eapply E_Sasgn  with (loc := oloc_1).
@@ -372,15 +370,12 @@ Proof.
    apply sym_not_eq; apply Hr12_16.
    apply sym_not_eq; apply Hr11_16.
    apply sym_not_eq; apply Hr10_16.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
+   rewrite hO_update_neq.
+   rewrite hO_update_neq.
+   rewrite hO_update_neq.
+   rewrite hO_update_neq.
    reflexivity.
-   simpl; discriminate.
-   simpl; discriminate.
-   simpl; discriminate.
-   simpl; discriminate.
+   auto. auto. auto. auto.
 
    eapply E_IfFalse.
    simpl. 
