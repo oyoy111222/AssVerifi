@@ -461,7 +461,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                     aeval stoV (Atuple4_Fourth tuple4) = n4 ->
                       hR loc1 = None -> hR loc2 = None ->
                       hR loc3 = None -> hR loc4 = None ->
-                        stoO oe = 0 ->
+                        hO loc = None ->
                  ceval (COplan_ZD oe (Atuple4 tuple4)) (stoO,stoV,stoS,hR,hO)
                           (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;loc4 !hr-> n4;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3);(Some loc4)] ; hO)))
 
@@ -469,7 +469,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                 aeval stoV (Atuple2_First tuple2) = n1 ->
                  aeval stoV (Atuple2_Second tuple2) = n2 ->
                       hR loc1 = None -> hR loc2 = None ->
-                         stoO oe = 0 ->
+                         hO loc = None ->
                  ceval (COplan_QYC oe (Atuple2 tuple2)) (stoO,stoV,stoS,hR,hO)
                           (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;hR),(loc !ho->  [(Some loc1);(Some loc2)] ; hO)))
 
@@ -478,7 +478,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                   aeval stoV  (Atuple3_Second tuple3) = n2 ->
                    aeval stoV  (Atuple3_Third tuple3) = n3 ->
                       hR loc1 = None -> hR loc2 = None -> hR loc3 = None ->
-                        stoO oe = 0 ->
+                        hO loc = None ->
                  ceval (COplan_GY oe (Atuple3 tuple3)) (stoO,stoV,stoS,hR,hO)
                           (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3)] ; hO)))
 
@@ -487,7 +487,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                   aeval stoV (Atuple3_Second tuple3) = n2 ->
                    aeval stoV (Atuple3_Third tuple3) = n3 ->
                       hR loc1 = None -> hR loc2 = None -> hR loc3 = None ->
-                           stoO oe = 0 ->
+                           hO loc = None ->
                  ceval (COplan_GD oe (Atuple3 tuple3)) (stoO,stoV,stoS,hR,hO)
                           (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3)] ; hO)))
 
@@ -496,7 +496,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                   aeval stoV (Atuple3_Second tuple3) = n2 ->
                    aeval stoV (Atuple3_Third tuple3) = n3 ->
                       hR loc1 = None -> hR loc2 = None -> hR loc3 = None ->
-                        stoO oe = 0 ->
+                        hO loc = None ->
                  ceval (COplan_JY oe (Atuple3 tuple3)) (stoO,stoV,stoS,hR,hO)
                           (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3)] ; hO)))
 
@@ -505,7 +505,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                   aeval stoV (Atuple3_Second tuple3) = n2 ->
                    aeval stoV (Atuple3_Third tuple3) = n3 ->
                       hR loc1 = None -> hR loc2 = None -> hR loc3 = None ->
-                        stoO oe = 0 ->
+                        hO loc = None ->
                  ceval (COplan_TF oe (Atuple3 tuple3)) (stoO,stoV,stoS,hR,hO)
                           (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3)] ; hO)))
 
