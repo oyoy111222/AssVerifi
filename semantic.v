@@ -366,16 +366,6 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                  oeval stoO stoV stoS oe = None ->
                  ceval (CSass se oe) (stoO,stoV,stoS,hR,hO) Abt
 
-| E_Sattach : forall stoO stoV stoS hR hO se oe ss bloc,
-                        oeval stoO stoV stoS oe = Some bloc ->
-                        stoS se = ss ->
-                        ceval (CSattach se oe) (stoO,stoV,stoS,hR,hO)
-                                 (St (stoO,stoV,(se !ss-> (ss ++ [bloc]); stoS),hR,hO))
-
-| E_Sattach_Abt : forall stoO stoV stoS hR hO se oe,
-                          oeval stoO stoV stoS oe = None ->
-                          ceval (CSattach se oe) (stoO,stoV,stoS,hR,hO) Abt
-
 | E_Sdelete : forall stoO stoV stoS hR hO se,
                 ceval (CSdelete se) (stoO,stoV,stoS,hR,hO)
                          (St (stoO,stoV,(se !ss-> nil;stoS),hR,hO))
