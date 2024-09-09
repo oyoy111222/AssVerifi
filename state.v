@@ -284,6 +284,20 @@ Proof.
   trivial. trivial.
 Qed.
 
+Lemma sO_update_shadow_7 : forall storeO x x2 x3 x4 x5 x6 v1 v2 v3 v4 v5 v6 v7 ,
+  (x !so-> v7 ;  x2 !so-> v6 ; x3 !so-> v5 ; 
+   x4 !so-> v4 ; x5 !so-> v3 ; x6 !so-> v2 ; x !so-> v1 ; storeO) 
+= (x !so-> v7 ;  x2 !so-> v6 ; x3 !so-> v5 ; 
+   x4 !so-> v4 ; x5 !so-> v3 ; x6 !so-> v2 ;  storeO).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold sO_update.
+  destruct (beq_id x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
 Lemma sO_update_shadow_8 : forall storeO x x2 x3 x4 x5 x6 x7  v1 v2 v3 v4 v5 v6 v7 v8,
   (x !so-> v8 ; x2 !so-> v7 ; x3 !so-> v6 ; x4 !so-> v5 ; 
    x5 !so-> v4 ; x6 !so-> v3 ; x7 !so-> v2 ; x !so-> v1 ; storeO) 
@@ -303,6 +317,36 @@ Lemma sO_update_shadow_9 : forall storeO x x2 x3 x4 x5 x6 x7 x8 v1 v2 v3 v4 v5 v
    x5 !so-> v5 ; x6 !so-> v4 ; x7 !so-> v3 ; x8 !so-> v2 ; x !so-> v1 ; storeO) 
 = (x !so-> v9 ; x2 !so-> v8 ; x3 !so-> v7 ; x4 !so-> v6 ; 
    x5 !so-> v5 ; x6 !so-> v4 ; x7 !so-> v3 ; x8 !so-> v2 ; storeO).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold sO_update.
+  destruct (beq_id x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma sO_update_shadow_10 : forall storeO x x2 x3 x4 x5 x6 x7 x8 x9 v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 ,
+  (x !so-> v8 ; x2 !so-> v7 ; x3 !so-> v6 ; x4 !so-> v5 ;
+   x8 !so-> v9 ; x9 !so-> v10 ;  x5 !so-> v4 ; x6 !so-> v3 ; x7 !so-> v2 ; x !so-> v1 ; storeO) 
+= (x !so-> v8 ; x2 !so-> v7 ; x3 !so-> v6 ; x4 !so-> v5 ; 
+   x8 !so-> v9 ; x9 !so-> v10 ; x5 !so-> v4 ; x6 !so-> v3 ; x7 !so-> v2 ; storeO).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold sO_update.
+  destruct (beq_id x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma sO_update_shadow_11 : forall storeO x x2 x3 x4 x5 x6 x7 x8 x9 x10 v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11,
+  (x !so-> v8 ; x2 !so-> v7 ; x3 !so-> v6 ; x4 !so-> v5 ;
+   x8 !so-> v9 ; x9 !so-> v10 ; x10 !so-> v11 ;
+   x5 !so-> v4 ; x6 !so-> v3 ; x7 !so-> v2 ; x !so-> v1 ; storeO) 
+= (x !so-> v8 ; x2 !so-> v7 ; x3 !so-> v6 ; x4 !so-> v5 ; 
+   x8 !so-> v9 ; x9 !so-> v10 ; x10 !so-> v11 ; 
+   x5 !so-> v4 ; x6 !so-> v3 ; x7 !so-> v2 ; storeO).
 Proof.
   intros.
   apply functional_extensionality.
@@ -455,10 +499,37 @@ Proof.
   trivial. trivial.
 Qed.
 
+Lemma sV_update_shadow_7 : forall storeV x y z x2 x3 x4 v1 v2 v3 v4 v5 v6 v7,
+  (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+   x4 !sv-> v7 ; x !sv-> v1 ;storeV) 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; x4 !sv-> v7 ;storeV).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold sV_update.
+  destruct (beq_id x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma sV_update_shadow_8 : forall storeV x y z x2 x3 x4 x5 v1 v2 v3 v4 v5 v6 v7 v8,
+  (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+   x4 !sv-> v7 ; x5 !sv-> v8 ; x !sv-> v1 ;storeV) 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+   x4 !sv-> v7 ; x5 !sv-> v8 ;storeV).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold sV_update.
+  destruct (beq_id x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
 Lemma sV_update_shadow_9 : forall storeV x y z x2 x3 x4 x5 x6 v1 v2 v3 v4 v5 v6 v7 v8 v9,
   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; x !sv-> v1 ;storeV) 
-=   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9  ;storeV).
 Proof.
   intros.
@@ -472,8 +543,24 @@ Qed.
 Lemma sV_update_shadow_10 : forall storeV x y z x2 x3 x4 x5 x6 x7 v1 v2 v3 v4 v5 v6 v7 v8 v9 v10,
   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; x7 !sv-> v10 ; x !sv-> v1 ;storeV) 
-=   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; x7 !sv-> v10 ;storeV).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold sV_update.
+  destruct (beq_id x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma sV_update_shadow_11 : forall storeV x y z x2 x3 x4 x5 x6 x7 x8 v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11,
+  (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+   x8 !sv-> v11 ; x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; 
+   x7 !sv-> v10 ; x !sv-> v1 ;storeV) 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+   x8 !sv-> v11 ; x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; 
+   x7 !sv-> v10 ;storeV).
 Proof.
   intros.
   apply functional_extensionality.
@@ -487,7 +574,7 @@ Lemma sV_update_shadow_12 : forall storeV x y z x2 x3 x4 x5 x6 x7 x8 x9 v1 v2 v3
   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; 
    x7 !sv-> v10 ; x !sv-> v1 ;storeV) 
-=   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; 
    x7 !sv-> v10 ;storeV).
 Proof.
@@ -503,7 +590,7 @@ Lemma sV_update_shadow_13 : forall storeV x y z x2 x3 x4 x5 x6 x7 x8 x9 x10 v1 v
   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x10 !sv-> v13 ; x4 !sv-> v7 ; x5 !sv-> v8 ; 
    x6 !sv-> v9 ;  x7 !sv-> v10 ; x !sv-> v1 ;storeV) 
-=   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x10 !sv-> v13 ; x4 !sv-> v7 ; x5 !sv-> v8 ; 
    x6 !sv-> v9 ;  x7 !sv-> v10 ;storeV).
 Proof.
@@ -519,7 +606,7 @@ Lemma sV_update_shadow_14 : forall storeV x y z x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 
   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x10 !sv-> v13 ; x11 !sv-> v14 ; x4 !sv-> v7 ; 
    x5 !sv-> v8 ; x6 !sv-> v9 ; x7 !sv-> v10 ; x !sv-> v1 ;storeV) 
-=   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x10 !sv-> v13 ; x11 !sv-> v14 ;  x4 !sv-> v7 ; 
    x5 !sv-> v8 ; x6 !sv-> v9 ; x7 !sv-> v10 ;storeV).
 Proof.
@@ -535,7 +622,7 @@ Lemma sV_update_shadow_15 : forall storeV x y z x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 
   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x10 !sv-> v13 ; x11 !sv-> v14 ; x12 !sv-> v15 ; 
    x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; x7 !sv-> v10 ; x !sv-> v1 ;storeV) 
-=   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x10 !sv-> v13 ; x11 !sv-> v14 ; x12 !sv-> v15 ; 
    x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; x7 !sv-> v10 ;storeV).
 Proof.
@@ -552,7 +639,7 @@ Lemma sV_update_shadow_17 : forall storeV x y z x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x10 !sv-> v13 ; x11 !sv-> v14 ; x12 !sv-> v15 ; 
    x13 !sv-> v16 ; x14 !sv-> v17 ; x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; 
    x7 !sv-> v10 ; x !sv-> v1 ;storeV) 
-=   (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
+= (x !sv-> v4 ; x2 !sv-> v5 ; x3 !sv-> v6 ; z !sv-> v3 ; y !sv-> v2 ; 
    x8 !sv-> v11 ; x9 !sv-> v12 ; x10 !sv-> v13 ; x11 !sv-> v14 ; x12 !sv-> v15 ; 
    x13 !sv-> v16 ; x14 !sv-> v17 ; x4 !sv-> v7 ; x5 !sv-> v8 ; x6 !sv-> v9 ; 
    x7 !sv-> v10 ;storeV).
@@ -626,6 +713,373 @@ Qed.
 
 Lemma hR_update_shadow : forall heapR x v1 v2,
   (x !hr-> v2 ; x !hr-> v1 ; heapR) = (x !hr-> v2; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_3 : forall heapR x x2  v1 v2 v3  ,
+  (x !hr-> v1 ; x2 !hr-> v2 ; x !hr-> v3 ; heapR) 
+= (x !hr-> v1 ; x2 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_4 : forall heapR x x2 x3 v1 v2 v3 v4  ,
+  (x !hr-> v1 ; x2 !hr-> v2 ; x3 !hr-> v3 ; x !hr-> v4 ; heapR) 
+= (x !hr-> v1 ; x2 !hr-> v2 ; x3 !hr-> v3 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_6 : forall heapR x x2 x3 x4 x5 v1 v2 v3 v4 v5 v6 ,
+  (x !hr-> v6 ; x2 !hr-> v5 ; x3 !hr-> v4 ; x4 !hr-> v3 ; x5 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v6 ; x2 !hr-> v5 ; x3 !hr-> v4 ; x4 !hr-> v3 ; x5 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_9 : forall heapR x x2 x3 x4 x5 x6 x7 x8 v1 v2 v3 v4 v5 v6 v7 v8 v9,
+  (x !hr-> v9 ; x2 !hr-> v8 ; x3 !hr-> v7 ; x4 !hr-> v6 ; 
+   x5 !hr-> v5 ; x6 !hr-> v4 ; x7 !hr-> v3 ; x8 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v9 ; x2 !hr-> v8 ; x3 !hr-> v7 ; x4 !hr-> v6 ; 
+   x5 !hr-> v5 ; x6 !hr-> v4 ; x7 !hr-> v3 ; x8 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_10 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 v1 v2 v3 v4 v5 v6 v7 v8 v9 v10,
+  (x !hr-> v9 ; x9 !hr-> v10 ; x2 !hr-> v8 ; x3 !hr-> v7 ; x4 !hr-> v6 ; 
+   x5 !hr-> v5 ; x6 !hr-> v4 ; x7 !hr-> v3 ; x8 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v9 ; x9 !hr-> v10 ; x2 !hr-> v8 ; x3 !hr-> v7 ; x4 !hr-> v6 ; 
+   x5 !hr-> v5 ; x6 !hr-> v4 ; x7 !hr-> v3 ; x8 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_12 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11  
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 ,
+  (x !hr-> v12 ; x2 !hr-> v11 ; x3 !hr-> v10 ; x4 !hr-> v9 ; x5 !hr-> v8 ; x6 !hr-> v7 ; x7 !hr-> v6 ; 
+   x8 !hr-> v5 ; x9 !hr-> v4 ; x10 !hr-> v3 ; x11 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v12 ; x2 !hr-> v11 ; x3 !hr-> v10 ; x4 !hr-> v9 ; x5 !hr-> v8 ; x6 !hr-> v7 ; x7 !hr-> v6 ; 
+   x8 !hr-> v5 ; x9 !hr-> v4 ; x10 !hr-> v3 ; x11 !hr-> v2 ; heapR) .
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_13 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12  v13,
+  (x !hr-> v12 ; x12 !hr-> v13 ; x2 !hr-> v11 ; x3 !hr-> v10 ; x4 !hr-> v9 ; x5 !hr-> v8 ; x6 !hr-> v7 ; x7 !hr-> v6 ; 
+   x8 !hr-> v5 ; x9 !hr-> v4 ; x10 !hr-> v3 ; x11 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v12 ; x12 !hr-> v13 ; x2 !hr-> v11 ; x3 !hr-> v10 ; x4 !hr-> v9 ; x5 !hr-> v8 ; x6 !hr-> v7 ; x7 !hr-> v6 ; 
+   x8 !hr-> v5 ; x9 !hr-> v4 ; x10 !hr-> v3 ; x11 !hr-> v2 ; heapR) .
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_15 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 ,
+  (x !hr-> v15 ; x2 !hr-> v14 ; x3 !hr-> v13 ; x4 !hr-> v12 ; x5 !hr-> v11 ; x6 !hr-> v10 ; x7 !hr-> v9 ;
+   x8 !hr-> v8 ; x9 !hr-> v7 ; x10 !hr-> v6 ; x11 !hr-> v5 ; x12 !hr-> v4 ; x13 !hr-> v3 ; x14 !hr-> v2 ; 
+   x !hr-> v1 ; heapR) 
+= (x !hr-> v15 ; x2 !hr-> v14 ; x3 !hr-> v13 ; x4 !hr-> v12 ; x5 !hr-> v11 ; x6 !hr-> v10 ; x7 !hr-> v9 ;
+   x8 !hr-> v8 ; x9 !hr-> v7 ; x10 !hr-> v6 ; x11 !hr-> v5 ; x12 !hr-> v4 ; x13 !hr-> v3 ; x14 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_18 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 ,
+  (x !hr-> v18 ; x2 !hr-> v17 ; x3 !hr-> v16 ; x4 !hr-> v15 ; x5 !hr-> v14 ; x6 !hr-> v13 ; x7 !hr-> v12 ; 
+   x8 !hr-> v11 ; x9 !hr-> v10 ; x10 !hr-> v9 ; x11 !hr-> v8 ; x12 !hr-> v7 ; x13 !hr-> v6 ; x14 !hr-> v5 ;
+   x15 !hr-> v4 ; x16 !hr-> v3 ; x17 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v18 ; x2 !hr-> v17 ; x3 !hr-> v16 ; x4 !hr-> v15 ; x5 !hr-> v14 ; x6 !hr-> v13 ; x7 !hr-> v12 ; 
+   x8 !hr-> v11 ; x9 !hr-> v10 ; x10 !hr-> v9 ; x11 !hr-> v8 ; x12 !hr-> v7 ; x13 !hr-> v6 ; x14 !hr-> v5 ;
+   x15 !hr-> v4 ; x16 !hr-> v3 ; x17 !hr-> v2 ; heapR) .
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_19 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19,
+  (x !hr-> v19 ; x2 !hr-> v18 ; x3 !hr-> v17 ; x4 !hr-> v16 ; x5 !hr-> v15 ; x6 !hr-> v14 ; x7 !hr-> v13 ; x8 !hr-> v12 ; 
+   x9 !hr-> v11 ; x10 !hr-> v10 ; x11 !hr-> v9 ; x12 !hr-> v8 ; x13 !hr-> v7 ; x14 !hr-> v6 ; x15 !hr-> v5 ;
+   x16 !hr-> v4 ; x17 !hr-> v3 ; x18 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v19 ; x2 !hr-> v18 ; x3 !hr-> v17 ; x4 !hr-> v16 ; x5 !hr-> v15 ; x6 !hr-> v14 ; x7 !hr-> v13 ; x8 !hr-> v12 ; 
+   x9 !hr-> v11 ; x10 !hr-> v10 ; x11 !hr-> v9 ; x12 !hr-> v8 ; x13 !hr-> v7 ; x14 !hr-> v6 ; x15 !hr-> v5 ;
+   x16 !hr-> v4 ; x17 !hr-> v3 ; x18 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_20 : forall heapR x  x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 
+                                   v1 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v23,
+  (x !hr-> v23 ; x4 !hr-> v20 ; x5 !hr-> v19 ; x6 !hr-> v18 ; x7 !hr-> v17 ; x8 !hr-> v16 ; x9 !hr-> v15 ; 
+   x10 !hr-> v14 ; x11 !hr-> v13 ; x12 !hr-> v12 ; x13 !hr-> v11 ; x14 !hr-> v10 ; x15 !hr-> v9 ; x16 !hr-> v8 ; x17 !hr-> v7 ; 
+   x18 !hr-> v6 ; x19 !hr-> v5 ; x20 !hr-> v4 ; x21 !hr-> v3 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v23 ; x4 !hr-> v20 ; x5 !hr-> v19 ; x6 !hr-> v18 ; x7 !hr-> v17 ; x8 !hr-> v16 ; x9 !hr-> v15 ; 
+   x10 !hr-> v14 ; x11 !hr-> v13 ; x12 !hr-> v12 ; x13 !hr-> v11 ; x14 !hr-> v10 ; x15 !hr-> v9 ; x16 !hr-> v8 ; x17 !hr-> v7 ; 
+   x18 !hr-> v6 ; x19 !hr-> v5 ; x20 !hr-> v4 ; x21 !hr-> v3  ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_21 : forall heapR x  x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 
+                                   v1 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v23,
+  (x !hr-> v23 ;  x3 !hr-> v21 ; x4 !hr-> v20 ; x5 !hr-> v19 ; x6 !hr-> v18 ; x7 !hr-> v17 ; x8 !hr-> v16 ; x9 !hr-> v15 ; 
+   x10 !hr-> v14 ; x11 !hr-> v13 ; x12 !hr-> v12 ; x13 !hr-> v11 ; x14 !hr-> v10 ; x15 !hr-> v9 ; x16 !hr-> v8 ; x17 !hr-> v7 ; 
+   x18 !hr-> v6 ; x19 !hr-> v5 ; x20 !hr-> v4 ; x21 !hr-> v3 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v23 ;  x3 !hr-> v21 ; x4 !hr-> v20 ; x5 !hr-> v19 ; x6 !hr-> v18 ; x7 !hr-> v17 ; x8 !hr-> v16 ; x9 !hr-> v15 ; 
+   x10 !hr-> v14 ; x11 !hr-> v13 ; x12 !hr-> v12 ; x13 !hr-> v11 ; x14 !hr-> v10 ; x15 !hr-> v9 ; x16 !hr-> v8 ; x17 !hr-> v7 ; 
+   x18 !hr-> v6 ; x19 !hr-> v5 ; x20 !hr-> v4 ; x21 !hr-> v3  ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_22 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 
+                                   v1 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23,
+  (x !hr-> v23 ; x2 !hr-> v22 ; x3 !hr-> v21 ; x4 !hr-> v20 ; x5 !hr-> v19 ; x6 !hr-> v18 ; x7 !hr-> v17 ; x8 !hr-> v16 ; x9 !hr-> v15 ; 
+   x10 !hr-> v14 ; x11 !hr-> v13 ; x12 !hr-> v12 ; x13 !hr-> v11 ; x14 !hr-> v10 ; x15 !hr-> v9 ; x16 !hr-> v8 ; x17 !hr-> v7 ; 
+   x18 !hr-> v6 ; x19 !hr-> v5 ; x20 !hr-> v4 ; x21 !hr-> v3 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v23 ; x2 !hr-> v22 ; x3 !hr-> v21 ; x4 !hr-> v20 ; x5 !hr-> v19 ; x6 !hr-> v18 ; x7 !hr-> v17 ; x8 !hr-> v16 ; x9 !hr-> v15 ; 
+   x10 !hr-> v14 ; x11 !hr-> v13 ; x12 !hr-> v12 ; x13 !hr-> v11 ; x14 !hr-> v10 ; x15 !hr-> v9 ; x16 !hr-> v8 ; x17 !hr-> v7 ; 
+   x18 !hr-> v6 ; x19 !hr-> v5 ; x20 !hr-> v4 ; x21 !hr-> v3  ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_23 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23,
+  (x !hr-> v23 ; x2 !hr-> v22 ; x3 !hr-> v21 ; x4 !hr-> v20 ; x5 !hr-> v19 ; x6 !hr-> v18 ; x7 !hr-> v17 ; x8 !hr-> v16 ; x9 !hr-> v15 ; 
+   x10 !hr-> v14 ; x11 !hr-> v13 ; x12 !hr-> v12 ; x13 !hr-> v11 ; x14 !hr-> v10 ; x15 !hr-> v9 ; x16 !hr-> v8 ; x17 !hr-> v7 ; 
+   x18 !hr-> v6 ; x19 !hr-> v5 ; x20 !hr-> v4 ; x21 !hr-> v3 ; x22 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v23 ; x2 !hr-> v22 ; x3 !hr-> v21 ; x4 !hr-> v20 ; x5 !hr-> v19 ; x6 !hr-> v18 ; x7 !hr-> v17 ; x8 !hr-> v16 ; x9 !hr-> v15 ; 
+   x10 !hr-> v14 ; x11 !hr-> v13 ; x12 !hr-> v12 ; x13 !hr-> v11 ; x14 !hr-> v10 ; x15 !hr-> v9 ; x16 !hr-> v8 ; x17 !hr-> v7 ; 
+   x18 !hr-> v6 ; x19 !hr-> v5 ; x20 !hr-> v4 ; x21 !hr-> v3 ; x22 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_27 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27,
+  (x !hr-> v27 ; x2 !hr-> v26 ; x3 !hr-> v25 ; x4 !hr-> v24 ; x5 !hr-> v23 ; x6 !hr-> v22 ; x7 !hr-> v21 ; x8 !hr-> v20 ; x9 !hr-> v19 ; 
+   x10 !hr-> v18 ; x11 !hr-> v17 ; x12 !hr-> v16 ; x13 !hr-> v15 ; x14 !hr-> v14 ; x15 !hr-> v13 ; x16 !hr-> v12 ; x17 !hr-> v11 ; 
+   x18 !hr-> v10 ; x19 !hr-> v9 ; x20 !hr-> v8 ; x21 !hr-> v7 ; x22 !hr-> v6 ; x23 !hr-> v5 ; x24 !hr-> v4 ; x25 !hr-> v3 ; x26 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v27 ; x2 !hr-> v26 ; x3 !hr-> v25 ; x4 !hr-> v24 ; x5 !hr-> v23 ; x6 !hr-> v22 ; x7 !hr-> v21 ; x8 !hr-> v20 ; x9 !hr-> v19 ; 
+   x10 !hr-> v18 ; x11 !hr-> v17 ; x12 !hr-> v16 ; x13 !hr-> v15 ; x14 !hr-> v14 ; x15 !hr-> v13 ; x16 !hr-> v12 ; x17 !hr-> v11 ; 
+   x18 !hr-> v10 ; x19 !hr-> v9 ; x20 !hr-> v8 ; x21 !hr-> v7 ; x22 !hr-> v6 ; x23 !hr-> v5 ; x24 !hr-> v4 ; x25 !hr-> v3 ; x26 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_28 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28,
+  (x !hr-> v27 ; x27 !hr-> v28 ; x2 !hr-> v26 ; x3 !hr-> v25 ; x4 !hr-> v24 ; x5 !hr-> v23 ; x6 !hr-> v22 ; x7 !hr-> v21 ; x8 !hr-> v20 ; x9 !hr-> v19 ; 
+   x10 !hr-> v18 ; x11 !hr-> v17 ; x12 !hr-> v16 ; x13 !hr-> v15 ; x14 !hr-> v14 ; x15 !hr-> v13 ; x16 !hr-> v12 ; x17 !hr-> v11 ; 
+   x18 !hr-> v10 ; x19 !hr-> v9 ; x20 !hr-> v8 ; x21 !hr-> v7 ; x22 !hr-> v6 ; x23 !hr-> v5 ; x24 !hr-> v4 ; x25 !hr-> v3 ; x26 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v27 ; x27 !hr-> v28 ; x2 !hr-> v26 ; x3 !hr-> v25 ; x4 !hr-> v24 ; x5 !hr-> v23 ; x6 !hr-> v22 ; x7 !hr-> v21 ; x8 !hr-> v20 ; x9 !hr-> v19 ; 
+   x10 !hr-> v18 ; x11 !hr-> v17 ; x12 !hr-> v16 ; x13 !hr-> v15 ; x14 !hr-> v14 ; x15 !hr-> v13 ; x16 !hr-> v12 ; x17 !hr-> v11 ; 
+   x18 !hr-> v10 ; x19 !hr-> v9 ; x20 !hr-> v8 ; x21 !hr-> v7 ; x22 !hr-> v6 ; x23 !hr-> v5 ; x24 !hr-> v4 ; x25 !hr-> v3 ; x26 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_29 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29,
+  (x !hr-> v27 ; x27 !hr-> v28 ; x2 !hr-> v26 ; x3 !hr-> v25 ; x4 !hr-> v24 ; x5 !hr-> v23 ; x6 !hr-> v22 ; x7 !hr-> v21 ; x8 !hr-> v20 ; x9 !hr-> v19 ; 
+   x10 !hr-> v18 ; x11 !hr-> v17 ; x12 !hr-> v16 ; x13 !hr-> v15 ; x14 !hr-> v14 ; x15 !hr-> v13 ; x16 !hr-> v12 ; x17 !hr-> v11 ; x28 !hr-> v29 ; 
+   x18 !hr-> v10 ; x19 !hr-> v9 ; x20 !hr-> v8 ; x21 !hr-> v7 ; x22 !hr-> v6 ; x23 !hr-> v5 ; x24 !hr-> v4 ; x25 !hr-> v3 ; x26 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v27 ; x27 !hr-> v28 ; x2 !hr-> v26 ; x3 !hr-> v25 ; x4 !hr-> v24 ; x5 !hr-> v23 ; x6 !hr-> v22 ; x7 !hr-> v21 ; x8 !hr-> v20 ; x9 !hr-> v19 ; 
+   x10 !hr-> v18 ; x11 !hr-> v17 ; x12 !hr-> v16 ; x13 !hr-> v15 ; x14 !hr-> v14 ; x15 !hr-> v13 ; x16 !hr-> v12 ; x17 !hr-> v11 ; x28 !hr-> v29 ;
+   x18 !hr-> v10 ; x19 !hr-> v9 ; x20 !hr-> v8 ; x21 !hr-> v7 ; x22 !hr-> v6 ; x23 !hr-> v5 ; x24 !hr-> v4 ; x25 !hr-> v3 ; x26 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_31 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29 x30
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31,
+  (x !hr-> v31 ; x2 !hr-> v30 ; x3 !hr-> v29 ; x4 !hr-> v28 ; x5 !hr-> v27 ; x6 !hr-> v26 ; x7 !hr-> v25 ; x8 !hr-> v24 ; x9 !hr-> v23 ; x10 !hr-> v22 ; 
+   x11 !hr-> v21 ; x12 !hr-> v20 ; x13 !hr-> v19 ; x14 !hr-> v18 ; x15 !hr-> v17 ; x16 !hr-> v16 ; x17 !hr-> v15 ; x18 !hr-> v14 ; x19 !hr-> v13 ; x20 !hr-> v12 ; 
+   x21 !hr-> v11 ; x22 !hr-> v10 ; x23 !hr-> v9 ; x24 !hr-> v8 ; x25 !hr-> v7 ; x26 !hr-> v6 ; x27 !hr-> v5 ; x28 !hr-> v4 ; x29 !hr-> v3 ; x30 !hr-> v2 ; x !hr-> v1 ; heapR) 
+= (x !hr-> v31 ; x2 !hr-> v30 ; x3 !hr-> v29 ; x4 !hr-> v28 ; x5 !hr-> v27 ; x6 !hr-> v26 ; x7 !hr-> v25 ; x8 !hr-> v24 ; x9 !hr-> v23 ; x10 !hr-> v22 ; 
+   x11 !hr-> v21 ; x12 !hr-> v20 ; x13 !hr-> v19 ; x14 !hr-> v18 ; x15 !hr-> v17 ; x16 !hr-> v16 ; x17 !hr-> v15 ; x18 !hr-> v14 ; x19 !hr-> v13 ; x20 !hr-> v12 ; 
+   x21 !hr-> v11 ; x22 !hr-> v10 ; x23 !hr-> v9 ; x24 !hr-> v8 ; x25 !hr-> v7 ; x26 !hr-> v6 ; x27 !hr-> v5 ; x28 !hr-> v4 ; x29 !hr-> v3 ; x30 !hr-> v2 ; heapR) .
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_35 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29 x30 x31 x32 x33 x34  
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 ,
+  (x !hr-> v35 ; x2 !hr-> v34 ; x3 !hr-> v33 ; x4 !hr-> v32 ; x5 !hr-> v31 ; x6 !hr-> v30 ; x7 !hr-> v29 ; x8 !hr-> v28 ; x9 !hr-> v27 ;  x10 !hr-> v26 ; x11 !hr-> v25 ; x12 !hr-> v24 ;
+   x13 !hr-> v23 ; x14 !hr-> v22 ; x15 !hr-> v21 ; x16 !hr-> v20 ; x17 !hr-> v19 ; x18 !hr-> v18 ; x19 !hr-> v17 ; x20 !hr-> v16 ; x21 !hr-> v15 ; x22 !hr-> v14 ; x23 !hr-> v13 ; 
+   x24 !hr-> v12 ; x25 !hr-> v11 ; x26 !hr-> v10 ; x27 !hr-> v9 ; x28 !hr-> v8 ; x29 !hr-> v7 ; x30 !hr-> v6 ; x31 !hr-> v5 ; x32 !hr-> v4 ; x33 !hr-> v3 ; x34 !hr-> v2 ; x !hr-> v1 ; heapR)
+= (x !hr-> v35 ; x2 !hr-> v34 ; x3 !hr-> v33 ; x4 !hr-> v32 ; x5 !hr-> v31 ; x6 !hr-> v30 ; x7 !hr-> v29 ; x8 !hr-> v28 ; x9 !hr-> v27 ;  x10 !hr-> v26 ; x11 !hr-> v25 ; x12 !hr-> v24 ;
+   x13 !hr-> v23 ; x14 !hr-> v22 ; x15 !hr-> v21 ; x16 !hr-> v20 ; x17 !hr-> v19 ; x18 !hr-> v18 ; x19 !hr-> v17 ; x20 !hr-> v16 ; x21 !hr-> v15 ; x22 !hr-> v14 ; x23 !hr-> v13 ; 
+   x24 !hr-> v12 ; x25 !hr-> v11 ; x26 !hr-> v10 ; x27 !hr-> v9 ; x28 !hr-> v8 ; x29 !hr-> v7 ; x30 !hr-> v6 ; x31 !hr-> v5 ; x32 !hr-> v4 ; x33 !hr-> v3 ; x34 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_36 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29 x30 x31 x32 x33 x34 x35 
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36,
+  (x !hr-> v36 ; x2 !hr-> v35 ; x3 !hr-> v34 ; x4 !hr-> v33 ; x5 !hr-> v32 ; x6 !hr-> v31 ; x7 !hr-> v30 ; x8 !hr-> v29 ; x9 !hr-> v28 ; x10 !hr-> v27 ;  x11 !hr-> v26 ; x12 !hr-> v25 ; 
+   x13 !hr-> v24 ; x14 !hr-> v23 ; x15 !hr-> v22 ; x16 !hr-> v21 ; x17 !hr-> v20 ; x18 !hr-> v19 ; x19 !hr-> v18 ; x20 !hr-> v17 ; x21 !hr-> v16 ; x22 !hr-> v15 ; x23 !hr-> v14 ; x24 !hr-> v13 ; 
+   x25 !hr-> v12 ; x26 !hr-> v11 ; x27 !hr-> v10 ; x28 !hr-> v9 ; x29 !hr-> v8 ; x30 !hr-> v7 ; x31 !hr-> v6 ; x32 !hr-> v5 ; x33 !hr-> v4 ; x34 !hr-> v3 ; x35 !hr-> v2 ; x !hr-> v1 ; heapR)
+= (x !hr-> v36 ; x2 !hr-> v35 ; x3 !hr-> v34 ; x4 !hr-> v33 ; x5 !hr-> v32 ; x6 !hr-> v31 ; x7 !hr-> v30 ; x8 !hr-> v29 ; x9 !hr-> v28 ; x10 !hr-> v27 ;  x11 !hr-> v26 ; x12 !hr-> v25 ; 
+   x13 !hr-> v24 ; x14 !hr-> v23 ; x15 !hr-> v22 ; x16 !hr-> v21 ; x17 !hr-> v20 ; x18 !hr-> v19 ; x19 !hr-> v18 ; x20 !hr-> v17 ; x21 !hr-> v16 ; x22 !hr-> v15 ; x23 !hr-> v14 ; x24 !hr-> v13 ; 
+   x25 !hr-> v12 ; x26 !hr-> v11 ; x27 !hr-> v10 ; x28 !hr-> v9 ; x29 !hr-> v8 ; x30 !hr-> v7 ; x31 !hr-> v6 ; x32 !hr-> v5 ; x33 !hr-> v4 ; x34 !hr-> v3 ; x35 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_37 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29 x30 x31 x32 x33 x34 x35 x36 
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37,
+  (x !hr-> v36 ; x2 !hr-> v35 ; x3 !hr-> v34 ; x4 !hr-> v33 ; x5 !hr-> v32 ; x6 !hr-> v31 ; x7 !hr-> v30 ; x8 !hr-> v29 ; x9 !hr-> v28 ; x10 !hr-> v27 ;  x11 !hr-> v26 ; x12 !hr-> v25 ; 
+   x13 !hr-> v24 ; x14 !hr-> v23 ; x15 !hr-> v22 ; x16 !hr-> v21 ; x17 !hr-> v20 ; x18 !hr-> v19 ; x19 !hr-> v18 ; x20 !hr-> v17 ; x21 !hr-> v16 ; x22 !hr-> v15 ; x23 !hr-> v14 ; x24 !hr-> v13 ; 
+   x25 !hr-> v12 ; x26 !hr-> v11 ; x27 !hr-> v10 ; x28 !hr-> v9 ; x29 !hr-> v8 ; x30 !hr-> v7 ; x31 !hr-> v6 ; x32 !hr-> v5 ; x33 !hr-> v4 ; x34 !hr-> v3 ; x35 !hr-> v2 ; x36 !hr-> v37 ; x !hr-> v1 ; heapR)
+= (x !hr-> v36 ; x2 !hr-> v35 ; x3 !hr-> v34 ; x4 !hr-> v33 ; x5 !hr-> v32 ; x6 !hr-> v31 ; x7 !hr-> v30 ; x8 !hr-> v29 ; x9 !hr-> v28 ; x10 !hr-> v27 ;  x11 !hr-> v26 ; x12 !hr-> v25 ; 
+   x13 !hr-> v24 ; x14 !hr-> v23 ; x15 !hr-> v22 ; x16 !hr-> v21 ; x17 !hr-> v20 ; x18 !hr-> v19 ; x19 !hr-> v18 ; x20 !hr-> v17 ; x21 !hr-> v16 ; x22 !hr-> v15 ; x23 !hr-> v14 ; x24 !hr-> v13 ; 
+   x25 !hr-> v12 ; x26 !hr-> v11 ; x27 !hr-> v10 ; x28 !hr-> v9 ; x29 !hr-> v8 ; x30 !hr-> v7 ; x31 !hr-> v6 ; x32 !hr-> v5 ; x33 !hr-> v4 ; x34 !hr-> v3 ; x35 !hr-> v2 ; x36 !hr-> v37 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_40 : forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29 x30 x31 x32 x33 x34 x35 x36 x37 x38 x39
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40,
+  (x !hr-> v40 ; x2 !hr-> v39 ; x3 !hr-> v38 ; x4 !hr-> v37 ; x5 !hr-> v36 ; x6 !hr-> v35 ; x7 !hr-> v34 ; x8 !hr-> v33 ; x9 !hr-> v32 ; x10 !hr-> v31 ; x11 !hr-> v30 ; x12 !hr-> v29 ; x13 !hr-> v28 ; 
+   x14 !hr-> v27 ; x15 !hr-> v26 ; x16 !hr-> v25 ; x17 !hr-> v24 ; x18 !hr-> v23 ; x19 !hr-> v22 ; x20 !hr-> v21 ; x21 !hr-> v20 ; x22 !hr-> v19 ; x23 !hr-> v18 ; x24 !hr-> v17 ; x25 !hr-> v16 ; x26 !hr-> v15 ; 
+   x27 !hr-> v14 ; x28 !hr-> v13 ; x29 !hr-> v12 ; x30 !hr-> v11 ; x31 !hr-> v10 ; x32 !hr-> v9 ; x33 !hr-> v8 ; x34 !hr-> v7 ; x35 !hr-> v6 ; x36 !hr-> v5 ; x37 !hr-> v4 ; x38 !hr-> v3 ; x39 !hr-> v2 ; x !hr-> v1 ; heapR)
+= (x !hr-> v40 ; x2 !hr-> v39 ; x3 !hr-> v38 ; x4 !hr-> v37 ; x5 !hr-> v36 ; x6 !hr-> v35 ; x7 !hr-> v34 ; x8 !hr-> v33 ; x9 !hr-> v32 ; x10 !hr-> v31 ; x11 !hr-> v30 ; x12 !hr-> v29 ; x13 !hr-> v28 ; 
+   x14 !hr-> v27 ; x15 !hr-> v26 ; x16 !hr-> v25 ; x17 !hr-> v24 ; x18 !hr-> v23 ; x19 !hr-> v22 ; x20 !hr-> v21 ; x21 !hr-> v20 ; x22 !hr-> v19 ; x23 !hr-> v18 ; x24 !hr-> v17 ; x25 !hr-> v16 ; x26 !hr-> v15 ; 
+   x27 !hr-> v14 ; x28 !hr-> v13 ; x29 !hr-> v12 ; x30 !hr-> v11 ; x31 !hr-> v10 ; x32 !hr-> v9 ; x33 !hr-> v8 ; x34 !hr-> v7 ; x35 !hr-> v6 ; x36 !hr-> v5 ; x37 !hr-> v4 ; x38 !hr-> v3 ; x39 !hr-> v2 ; heapR).
+Proof.
+  intros.
+  apply functional_extensionality.
+  intros.
+  unfold hR_update.
+  destruct (Nat.eqb x x0) eqn:H.
+  trivial. trivial.
+Qed.
+
+Lemma hR_update_shadow_47: forall heapR x x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29 x30 x31 x32 x33 x34 x35 x36 x37 x38 x39 x40 x41 x42 x43 x44 x45 x46
+                                   v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20 v21 v22 v23 v24 v25 v26 v27 v28 v29 v30 v31 v32 v33 v34 v35 v36 v37 v38 v39 v40 v41 v42 v43 v44 v45 v46 v47,
+  (x !hr-> v40 ; x40 !hr-> v41 ; x41 !hr-> v42 ; x42 !hr-> v43 ; x43 !hr-> v44 ; x44 !hr-> v45 ; x45 !hr-> v46 ; x46 !hr-> v47 ;
+   x2 !hr-> v39 ; x3 !hr-> v38 ; x4 !hr-> v37 ; x5 !hr-> v36 ; x6 !hr-> v35 ; x7 !hr-> v34 ; x8 !hr-> v33 ; x9 !hr-> v32 ; x10 !hr-> v31 ; x11 !hr-> v30 ; x12 !hr-> v29 ; x13 !hr-> v28 ; 
+   x14 !hr-> v27 ; x15 !hr-> v26 ; x16 !hr-> v25 ; x17 !hr-> v24 ; x18 !hr-> v23 ; x19 !hr-> v22 ; x20 !hr-> v21 ; x21 !hr-> v20 ; x22 !hr-> v19 ; x23 !hr-> v18 ; x24 !hr-> v17 ; x25 !hr-> v16 ; x26 !hr-> v15 ; 
+   x27 !hr-> v14 ; x28 !hr-> v13 ; x29 !hr-> v12 ; x30 !hr-> v11 ; x31 !hr-> v10 ; x32 !hr-> v9 ; x33 !hr-> v8 ; x34 !hr-> v7 ; x35 !hr-> v6 ; x36 !hr-> v5 ; x37 !hr-> v4 ; x38 !hr-> v3 ; x39 !hr-> v2 ; x !hr-> v1 ; heapR)
+= (x !hr-> v40 ; x40 !hr-> v41 ; x41 !hr-> v42 ; x42 !hr-> v43 ; x43 !hr-> v44 ; x44 !hr-> v45 ; x45 !hr-> v46 ; x46 !hr-> v47 ;
+   x2 !hr-> v39 ; x3 !hr-> v38 ; x4 !hr-> v37 ; x5 !hr-> v36 ; x6 !hr-> v35 ; x7 !hr-> v34 ; x8 !hr-> v33 ; x9 !hr-> v32 ; x10 !hr-> v31 ; x11 !hr-> v30 ; x12 !hr-> v29 ; x13 !hr-> v28 ; 
+   x14 !hr-> v27 ; x15 !hr-> v26 ; x16 !hr-> v25 ; x17 !hr-> v24 ; x18 !hr-> v23 ; x19 !hr-> v22 ; x20 !hr-> v21 ; x21 !hr-> v20 ; x22 !hr-> v19 ; x23 !hr-> v18 ; x24 !hr-> v17 ; x25 !hr-> v16 ; x26 !hr-> v15 ; 
+   x27 !hr-> v14 ; x28 !hr-> v13 ; x29 !hr-> v12 ; x30 !hr-> v11 ; x31 !hr-> v10 ; x32 !hr-> v9 ; x33 !hr-> v8 ; x34 !hr-> v7 ; x35 !hr-> v6 ; x36 !hr-> v5 ; x37 !hr-> v4 ; x38 !hr-> v3 ; x39 !hr-> v2 ; heapR).
 Proof.
   intros.
   apply functional_extensionality.

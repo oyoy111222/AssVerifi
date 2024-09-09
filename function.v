@@ -1,8 +1,8 @@
 Require Import Coq.Arith.PeanoNat.
 Require Import Coq.Bool.Bool.
-Require Import GlobalCounter.
 Require Export Coq.omega.OmegaLemmas.
 Require Export Coq.Arith.Arith.
+Require Import Coq.ZArith.ZArith.
 Require Export Coq.Arith.EqNat.
 Require Import Coq.Strings.String.
 Require Export Coq.Logic.FunctionalExtensionality.
@@ -53,6 +53,34 @@ Definition check_mod (a : nat)(b : nat) : bool :=
   match a mod 10 with
   | x => if Nat.eqb x b then true else false
   end.
+
+(* 辅助函数：将大整数转换为 nat 类型的自然数 *)
+Fixpoint pos_to_nat (p : positive) : nat :=
+  match p with
+  | xI p' => S (2 * pos_to_nat p')  (* 正数情况下，每次乘以2再加1 *)
+  | xO p' => 2 * pos_to_nat p'       (* 偶数情况下，每次乘以2 *)
+  | xH => 1                          (* 最小的正整数是 1 *)
+  end.
+
+(* 主函数：将大整数转换为 nat 类型 *)
+Definition large_to_nat (z : Z) : nat :=
+  match z with
+  | Z0 => 0                (* 对于零，返回 0 *)
+  | Zpos p => pos_to_nat p (* 对于正数，调用辅助函数处理 *)
+  | Zneg _ => 0            (* 对于负数，返回 0，因为不能转换为 nat 类型 *)
+  end.
+
+(* Ltac repeat_n_times n tac :=
+  match n with
+  | 0 => idtac
+  | S ?n' => tac; repeat_n_times n' tac
+  end.
+
+Ltac repeat_n_times_rewrite n :=
+  match n with
+  | 0 => idtac
+  | S ?n' => rewrite sO_update_neq; repeat_n_times_rewrite n'
+  end. *)
 
 (* 使用 <=? 操作符的 Notation *)
 Notation "x <=? y" := (Nat.leb x y) (at level 70) : nat_scope.

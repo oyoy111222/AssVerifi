@@ -35,14 +35,14 @@ Fixpoint aeval (stoV: storeV) (a: aexp) : nat :=
 Fixpoint findoe (li:list nat) (loc:nat): option nat :=
 match li with
 | [] => None
-| x::xli => if (beq_nat loc 1) then Some x else (findoe xli (loc-1))
+| x::xli => if (Nat.eqb loc 1) then Some x else (findoe xli (loc-1))
 end.
 
 (* 给定的资源列表 li 中查找特定位置 loc 的元素 *)
 Fixpoint findre_helper (xli : list (option nat)) (loc : nat) {struct xli} : option nat :=
   match xli with
   | [] => None
-  | x :: xl => if beq_nat loc 1 then  x else findre_helper (xl) (loc - 1)
+  | x :: xl => if Nat.eqb loc 1 then  x else findre_helper (xl) (loc - 1)
   end.
 
 Fixpoint list_length {A : Type} (l : list A) : nat :=
@@ -115,7 +115,7 @@ Fixpoint seval (stoO:storeO) (stoV:storeV)
                 (stoS:storeS) (se:sexp) : list nat :=
 match se with
 | SNull => null
-| SFin =>  on (* 使用[0]代表某个特定的值，表示完成*)
+| SFin =>  on (* 使用on表示完成*)
 | SId name => stoS name
   | SOattach se1 oe2 => 
     match (seval stoO stoV stoS se1, option_nat_to_nat(oeval stoO stoV stoS oe2)) with
@@ -128,11 +128,11 @@ match se with
   end.
 
 (*布尔表达式*)
-Fixpoint beval stoV (b:bexp) : option bool :=
+Fixpoint beval (stoV: storeV) (b:bexp) : option bool :=
 match b with
 | BTrue   => Some true
 | BFalse  => Some false
-| BEq a1 a2 => Some (beq_nat (aeval stoV a1) (aeval stoV a2))
+| BEq a1 a2 => Some (Nat.eqb (aeval stoV a1) (aeval stoV a2))
 | BLe a1 a2 => Some (leb (aeval stoV a1) (aeval stoV a2))
 | BZd t1 t2 => Some (unfoldWing t1 t2)
 | BTr t1 c  => Some (Tractor_need t1 c)
@@ -160,7 +160,7 @@ end.
 Definition beq_op_nat (x y: option nat) : bool :=
 match x,y with
 | None,None => true
-| Some n1,Some n2 => beq_nat n1 n2
+| Some n1,Some n2 => Nat.eqb n1 n2
 | _,_ => false
 end.
 
@@ -192,15 +192,21 @@ let rest := firstn i l in
  rest ++ nth_update i m l.
 
 Definition value_change (n:nat) :=
-  fun m => if beq_nat m n then m else n.
+  fun m => if Nat.eqb m n then m else n.
 
 Fixpoint list_update (li:list nat) (n : nat) : list nat :=
   map (value_change n) li.
 
-Fixpoint in_list (li:list (option nat)) (x:option nat) : bool :=
+Fixpoint in_list (li : list nat) (x : nat) : bool :=
+  match li with
+  | [] => false
+  | t :: xli => if Nat.eqb t x then true else in_list xli x
+  end.
+
+Fixpoint in_list_list (li:list (option nat)) (x:option nat) : bool :=
 match li with
 | [] => false
-| t::xli => if beq_op_nat t x then true else in_list xli x
+| t::xli => if beq_op_nat t x then true else in_list_list xli x
 end.
 
 (* 去除列表 li 的最后一个元素 *)
@@ -248,11 +254,10 @@ match locli,nli with
 | _,_ => hO
 end.
 
-
 Definition OeSafe stoO stoV stoS (hr:heapR) (hO:heapO) oe ol olist: Prop :=  
     (oeval stoO stoV stoS oe) = Some ol ->
     hO ol = Some olist ->
-    forall l, in_list olist l = true ->
+    forall l, in_list_list olist l = true ->
               exists k, hr (o2v l) = Some k.
 
 (* 指令集 *)
@@ -366,6 +371,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                  oeval stoO stoV stoS oe = None ->
                  ceval (CSass se oe) (stoO,stoV,stoS,hR,hO) Abt
 
+
 | E_Sdelete : forall stoO stoV stoS hR hO se,
                 ceval (CSdelete se) (stoO,stoV,stoS,hR,hO)
                          (St (stoO,stoV,(se !ss-> nil;stoS),hR,hO))
@@ -387,9 +393,10 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                  ceval (CSasgn se oe ) (stoO,stoV,stoS,hR,hO)
                           (St (stoO,stoV,(se !ss-> [loc]; stoS),hR,hO))
 
-| E_Satt : forall stoO stoV stoS hR hO se oe ss loc,
+| E_Satt : forall stoO stoV stoS hR hO se oe ss loc ,
                  oeval stoO stoV stoS oe = Some loc ->
                                  stoS se = ss ->
+                         (forall l, in_list ss l = true -> exists k, hO l = k) ->
                         ceval (CSatt se oe) (stoO,stoV,stoS,hR,hO)
                                  (St (stoO,stoV,(se !ss-> (ss ++ [loc]); stoS),hR,hO))
 
@@ -397,7 +404,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
             stoS se = ss ->
                  stoO e = loc ->
                    hO loc = Some llist ->
-                    (forall l, in_list llist l = true -> exists k, hR (o2v l) = k) ->
+                    (forall l, in_list_list llist l = true -> exists k, hR (o2v l) = k) ->
                    ceval (CSexe se (ANum n))(stoO,stoV,stoS,hR,hO)
                                  (St ((e !so->0;stoO),stoV,(se !ss-> (remove_at n ss); stoS),(hR_removes hR (map o2v llist)),(hO_remove hO loc)))
 
@@ -454,7 +461,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
               ceval (COlength loc x) (stoO,stoV,stoS,hR,hO)
                     (St (stoO,(x !sv-> m;stoV),stoS,hR,hO))
 
-| E_Oplan_ZD : forall stoO stoV stoS hR hO oe tuple4 loc n1 n2 n3 n4 loc1 loc2 loc3 loc4,
+| E_Oplan_Tuple4 : forall stoO stoV stoS hR hO oe tuple4 loc n1 n2 n3 n4 loc1 loc2 loc3 loc4,
                 aeval stoV (Atuple4_First tuple4) = n1 ->
                   aeval stoV (Atuple4_Second tuple4) = n2 ->
                    aeval stoV (Atuple4_Third tuple4) = n3 ->
@@ -462,55 +469,29 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
                       hR loc1 = None -> hR loc2 = None ->
                       hR loc3 = None -> hR loc4 = None ->
                         hO loc = None ->
-                 ceval (COplan_ZD oe (Atuple4 tuple4)) (stoO,stoV,stoS,hR,hO)
+                 ceval (COplan_tuple4 oe (Atuple4 tuple4)) (stoO,stoV,stoS,hR,hO)
                           (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;loc4 !hr-> n4;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3);(Some loc4)] ; hO)))
 
-| E_Oplan_QYC : forall stoO stoV stoS hR hO oe tuple2 loc  n1 n2 loc1 loc2,
-                aeval stoV (Atuple2_First tuple2) = n1 ->
-                 aeval stoV (Atuple2_Second tuple2) = n2 ->
-                      hR loc1 = None -> hR loc2 = None ->
-                         hO loc = None ->
-                 ceval (COplan_QYC oe (Atuple2 tuple2)) (stoO,stoV,stoS,hR,hO)
-                          (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;hR),(loc !ho->  [(Some loc1);(Some loc2)] ; hO)))
-
-| E_Oplan_GY : forall stoO stoV stoS hR hO oe tuple3 loc n1 n2 n3 loc1 loc2 loc3,
+| E_Oplan_Tuple3 : forall stoO stoV stoS hR hO oe tuple3 loc n1 n2 n3 loc1 loc2 loc3,
                 aeval stoV  (Atuple3_First tuple3) = n1 ->
                   aeval stoV  (Atuple3_Second tuple3) = n2 ->
                    aeval stoV  (Atuple3_Third tuple3) = n3 ->
                       hR loc1 = None -> hR loc2 = None -> hR loc3 = None ->
                         hO loc = None ->
-                 ceval (COplan_GY oe (Atuple3 tuple3)) (stoO,stoV,stoS,hR,hO)
+                 ceval (COplan_tuple3 oe (Atuple3 tuple3)) (stoO,stoV,stoS,hR,hO)
                           (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3)] ; hO)))
 
-| E_Oplan_GD : forall stoO stoV stoS hR hO oe tuple3 loc n1 n2 n3 loc1 loc2 loc3,
-                aeval stoV  (Atuple3_First tuple3) = n1 ->
-                  aeval stoV (Atuple3_Second tuple3) = n2 ->
-                   aeval stoV (Atuple3_Third tuple3) = n3 ->
-                      hR loc1 = None -> hR loc2 = None -> hR loc3 = None ->
-                           hO loc = None ->
-                 ceval (COplan_GD oe (Atuple3 tuple3)) (stoO,stoV,stoS,hR,hO)
-                          (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3)] ; hO)))
-
-| E_Oplan_JY : forall stoO stoV stoS hR hO oe tuple3 loc n1 n2 n3 loc1 loc2 loc3,
-                aeval stoV (Atuple3_First tuple3) = n1 ->
-                  aeval stoV (Atuple3_Second tuple3) = n2 ->
-                   aeval stoV (Atuple3_Third tuple3) = n3 ->
-                      hR loc1 = None -> hR loc2 = None -> hR loc3 = None ->
-                        hO loc = None ->
-                 ceval (COplan_JY oe (Atuple3 tuple3)) (stoO,stoV,stoS,hR,hO)
-                          (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3)] ; hO)))
-
-| E_Oplan_TF : forall stoO stoV stoS hR hO oe tuple3 loc n1 n2 n3 loc1 loc2 loc3 ,
-                aeval stoV (Atuple3_First tuple3) = n1 ->
-                  aeval stoV (Atuple3_Second tuple3) = n2 ->
-                   aeval stoV (Atuple3_Third tuple3) = n3 ->
-                      hR loc1 = None -> hR loc2 = None -> hR loc3 = None ->
-                        hO loc = None ->
-                 ceval (COplan_TF oe (Atuple3 tuple3)) (stoO,stoV,stoS,hR,hO)
-                          (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;loc3 !hr-> n3;hR),(loc !ho->  [(Some loc1);(Some loc2);(Some loc3)] ; hO)))
+| E_Oplan_Tuple2 : forall stoO stoV stoS hR hO oe tuple2 loc  n1 n2 loc1 loc2,
+                aeval stoV (Atuple2_First tuple2) = n1 ->
+                 aeval stoV (Atuple2_Second tuple2) = n2 ->
+                      hR loc1 = None -> hR loc2 = None ->
+                         hO loc = None ->
+                 ceval (COplan_tuple2 oe (Atuple2 tuple2)) (stoO,stoV,stoS,hR,hO)
+                          (St ((oe !so-> loc;stoO),stoV,stoS,(loc1 !hr-> n1;loc2 !hr-> n2;hR),(loc !ho->  [(Some loc1);(Some loc2)] ; hO)))
 
 
 (*资源指令*)
+
 | E_Rnew : forall stoO stoV stoS hR hO b loc bloc,
               hO loc = None ->
               ceval (CRnew b) (stoO, stoV, stoS, hR, hO)
@@ -520,7 +501,7 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
 | E_Rsize : forall stoO stoV stoS hR hO bk x bloc llist m,
               (reval stoO stoV hO bk) = Some bloc ->
               hO bloc = Some llist ->
-              (forall l, in_list llist l = true -> exists k, hR (o2v l) = k) ->
+              (forall l, in_list_list llist l = true -> exists k, hR (o2v l) = k) ->
               length llist = m ->
               ceval (CRlength x bk) (stoO,stoV,stoS,hR,hO)
                     (St (stoO,(x !sv-> m; stoV),stoS,hR,hO))
@@ -528,35 +509,30 @@ Inductive ceval: command -> state -> ext_state -> Prop :=
 | E_Rreplace : forall stoO stoV stoS hR hO bk bloc llist f ff loc e i,
               (reval stoO stoV hO bk) = Some bloc ->
               hO bloc = Some llist ->
-              (forall l, in_list llist l = true -> exists k, hR (o2v l) = k) ->
+              (forall l, in_list_list llist l = true -> exists k, hR (o2v l) = k) ->
               ff = hO loc ->
               (aeval stoV e) = i ->
               ceval (CRreplace (OId f) e bk) (stoO,stoV,stoS,hR,hO)
                          (St (stoO,stoV,stoS,hR,(loc !ho-> wrap_with_option (nth_list_update i bloc (flatten_option_list ff)) ;hO)))
 
-| E_Rlookup : forall stoO stoV stoS hR hO bk bloc loc llist e x m j,
-              (reval stoO stoV hO bk) = Some bloc ->
-              hO bloc = Some llist ->
-              (forall l, in_list llist l = true -> exists k, hR (o2v l) = k) ->
-              aeval stoV  e = j ->
-              nth_list_o j llist = Some loc ->
-              hR loc = Some m ->
-                ceval (CRlookup x bk e) (stoO,stoV,stoS,hR,hO)
-                         (St (stoO,(x !sv-> m;stoV),stoS,hR,hO))
+| E_Radd : forall stoO stoV stoS hR hO b n loc,
+              stoV b  = n ->
+              hR loc = Some n ->
+              ceval (CRadd b) (stoO, stoV, stoS, hR, hO)
+                    (St (stoO, (b !sv-> (n+1);stoV), stoS, (loc !hr-> (n+1);hR), hO))
 
-| E_Rtruncate : forall stoO stoV stoS hR hO bk bloc llist,
-              (reval stoO stoV hO bk) = Some bloc ->
-              hO bloc = Some llist ->
-              (forall l, in_list llist l = true -> exists k, hR (o2v l) = k) ->
-              ceval (CRtruncate bk) (stoO,stoV,stoS,hR,hO)
-                    (St (stoO,stoV,stoS,hR,(bloc !ho-> cuttail_o llist; hO)))
+| E_Rsub : forall stoO stoV stoS hR hO b n loc,
+              stoV b  = n ->
+              hR loc = Some n ->
+              ceval (CRsub b) (stoO, stoV, stoS, hR, hO)
+                    (St (stoO, (b !sv-> (n-1);stoV), stoS, (loc !hr-> (n-1);hR), hO))
 
-| E_Radd : forall stoO stoV stoS hR hO b n,
+| E_Radd_V : forall stoO stoV stoS hR hO b n,
               stoV b  = n ->
               ceval (CRadd b) (stoO, stoV, stoS, hR, hO)
                     (St (stoO, (b !sv-> (n+1);stoV), stoS, hR, hO))
 
-| E_Rsub : forall stoO stoV stoS hR hO b n ,
+| E_Rsub_V : forall stoO stoV stoS hR hO b n ,
               stoV b  = n ->
               ceval (CRsub b) (stoO, stoV, stoS, hR, hO)
                     (St (stoO, (b !sv-> (n-1);stoV), stoS, hR, hO)).

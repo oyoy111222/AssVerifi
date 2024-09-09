@@ -1,14 +1,14 @@
-Require Import CSSsVerification2.
+Require Import CSSsVerification_Abt.
 Require Import function.
+Require Import SafeinHo.
 Require Import SafeinHr.
 Require Import NeqDefinition.
-Require Import Aid.
-Require Export util.
 Require Export language.
 Require Export semantic.
 Require Export state.
-Require Import Coq.Strings.String.
-Require Import Coq.Classes.RelationClasses.
+Require Import BinNums.
+Require Import Coq.Lists.List.
+Require Import ZArith.
 Import ListNotations.
 
 Definition EX_Abt :=
@@ -43,7 +43,7 @@ neq_16 rloc_1 rloc_2 rloc_3 rloc_4 rloc_5 rloc_6 rloc_7 rloc_8 rloc_9 rloc_10 rl
 empty_st =[EX_Abt]=> Abt.
 
 Proof.
-  unfold neq0_13, neq0_40, neq_13, neq_40.
+  unfold neq0_5, neq0_16, neq_5, neq_16.
   intros oloc_1 oloc_2 oloc_3 oloc_4 oloc_5.
   intros rloc_1 rloc_2 rloc_3 rloc_4 rloc_5 rloc_6 rloc_7 rloc_8 rloc_9 rloc_10 rloc_11 rloc_12 rloc_13 
          rloc_14 rloc_15 rloc_16.
@@ -76,7 +76,7 @@ Proof.
   ).
 
   eapply E_Seq.
- - eapply E_Oplan_ZD with (loc := oloc_1) (loc1 := rloc_1) (loc2 := rloc_2) (loc3 := rloc_3)(loc4 := rloc_4).
+ - eapply E_Oplan_Tuple4 with (loc := oloc_1) (loc1 := rloc_1) (loc2 := rloc_2) (loc3 := rloc_3)(loc4 := rloc_4).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -88,7 +88,7 @@ Proof.
    reflexivity.
 
  - eapply E_Seq.
-   eapply E_Oplan_GY with (loc := oloc_2) (loc1 := rloc_5) (loc2 := rloc_6) (loc3 := rloc_7).
+   eapply E_Oplan_Tuple3 with (loc := oloc_2) (loc1 := rloc_5) (loc2 := rloc_6) (loc3 := rloc_7).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity.
@@ -124,7 +124,7 @@ Proof.
    auto.
 
    eapply E_Seq.
-   eapply E_Oplan_QYC with (loc := oloc_3) (loc1 := rloc_8) (loc2 := rloc_9).
+   eapply E_Oplan_Tuple2 with (loc := oloc_3) (loc1 := rloc_8) (loc2 := rloc_9).
    simpl; reflexivity.
    simpl; reflexivity.
    rewrite hR_update_neq. 
@@ -163,7 +163,7 @@ Proof.
    auto. auto.
 
    eapply E_Seq.
-   eapply E_Oplan_TF with (loc := oloc_4) (loc1 := rloc_10) (loc2 := rloc_11)(loc3 := rloc_12).
+   eapply E_Oplan_Tuple3 with (loc := oloc_4) (loc1 := rloc_10) (loc2 := rloc_11)(loc3 := rloc_12).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -238,22 +238,28 @@ Proof.
    eapply E_Satt  with (loc := oloc_2).
    simpl. reflexivity.
    rewrite sS_update_eq; reflexivity.
+   intros. apply SafeinHo1_4.
+   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
    rewrite sS_update_shadow.
 
    eapply E_Seq.
    eapply E_Satt  with (loc := oloc_3).
    simpl. reflexivity.
-   rewrite sS_update_eq;  reflexivity.
+   simpl. rewrite sS_update_eq;  reflexivity.
+   intros. apply SafeinHo2_4.
+   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
    rewrite sS_update_shadow.
 
    eapply E_Seq.
    eapply E_Satt  with (loc := oloc_4).
    simpl. reflexivity.
-   rewrite sS_update_eq;  reflexivity.
+   simpl. rewrite sS_update_eq;  reflexivity.
+   intros. apply SafeinHo3_4.
+   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
    rewrite sS_update_shadow.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    simpl.
 
@@ -265,7 +271,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_ZD with (loc := oloc_5) (loc1 := rloc_13) (loc2 := rloc_14) (loc3 := rloc_15)(loc4 := rloc_16).
+   eapply E_Oplan_Tuple4 with (loc := oloc_5) (loc1 := rloc_13) (loc2 := rloc_14) (loc3 := rloc_15)(loc4 := rloc_16).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 

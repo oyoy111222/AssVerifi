@@ -59,7 +59,6 @@ Inductive bexp: Type :=
 | BAnd : bexp -> bexp -> bexp
 | BOr  : bexp -> bexp -> bexp.
 
-
 Inductive command: Type :=
 | CSkip    : command
 | CAbt    : command
@@ -92,22 +91,14 @@ Inductive command: Type :=
 | COalloc  : id -> aexp -> command
 | COdelete : nat -> command
 | COlength : nat -> id -> command
-| COplan_ZD : id -> aexp -> command
-| COplan_GY : id -> aexp -> command
-| COplan_GD : id -> aexp -> command
-| COplan_JY : id -> aexp -> command 
-| COplan_TF : id -> aexp -> command 
-| COplan_QYC : id -> aexp -> command
- 
+| COplan_tuple4 : id -> aexp -> command
+| COplan_tuple3 : id -> aexp -> command
+| COplan_tuple2 : id -> aexp -> command
+
 (*资源*)
-| CRalloc  : id -> aexp -> command
 | CRnew    : id -> command
-| CRappend : oexp -> aexp -> command
-| CRlookup : id -> rexp -> aexp -> command
 | CRlength : id -> rexp -> command
 | CRreplace : oexp -> aexp -> rexp -> command
-| CRtruncate : rexp -> command
-| CRdelete : rexp -> command
 | CRadd : id -> command
 | CRsub : id -> command.
 
@@ -121,12 +112,30 @@ Notation "'WHILE' b 'DO' c 'END'" :=
   (CWhile b c) (at level 80, right associativity).
 Notation "'IF' b 'THEN' c1 'ELSE' c2 'FI'" :=
   (CIf b c1 c2) (at level 80, right associativity).
-Notation "x '::=plan_ZD' y" := (COplan_ZD x y : command) (at level 80, right associativity).
-Notation "x '::=plan_GY' y" := (COplan_GY x y : command) (at level 80, right associativity).
-Notation "x '::=plan_QYC' y" := (COplan_QYC x y : command) (at level 80, right associativity).
-Notation "x '::=plan_GD' y" := (COplan_GD x y : command) (at level 80, right associativity).
-Notation "x '::=plan_JY' y" := (COplan_JY x y : command) (at level 80, right associativity).
-Notation "x '::=plan_TF' y" := (COplan_TF x y : command) (at level 80, right associativity).
+Notation "x '::=plan_ZD' y" := (COplan_tuple4 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_GY' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_GN' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_GD' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_JY' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_TF' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_QYC' y" := (COplan_tuple2 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_JYGD' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_GDDZ' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_RWJZ' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_JWJC' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_GRDZT' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_NMWQZZ' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_GSGSFL' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_WQBX' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_ZYHS' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_ZYCBL' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_GC' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_DJ' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_KC' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_NC' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_DY' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_FKZJ' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
+Notation "x '::=plan_QF' y" := (COplan_tuple3 x y : command) (at level 80, right associativity).
 Notation "x '::=asgn' y" := (CSasgn x y : command) (at level 80, right associativity).
 Notation "x '::=att' y" := (CSatt x y : command) (at level 80, right associativity).
 Notation "x '::exe' n" := (CSexe x n : command) (at level 80).

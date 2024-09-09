@@ -12,32 +12,32 @@ Require Export Logic.
 
 (*Some variables*)
 
-(* 歼35_3 *)
+(* 歼35_11 *)
 Definition i  : id := Id "i".
-Definition J35_3_ZD : id := Id "J35_3_ZD". (* 折叠 *)
-Definition J35_3_GD : id := Id "J35_3_GD". (* 供电 *)
-Definition J35_3_JY : id := Id "J35_3_JY". (* 加油 *)
-Definition J35_3_GRDZT : id := Id "J35_3_GRDZT". (* 干扰弹装填 *)
-Definition J35_3_NMWQZZ : id := Id "J35_3_NMWQZZ". (* 内埋武器装载 *)
-Definition J35_3_GDDZ : id := Id "J35_3_GDDZ". (* 惯导对准 *)
-Definition J35_3_JWJC : id := Id "J35_3_RWJZ". (* 机务检查 *)
+Definition J35_11_ZD : id := Id "J35_11_ZD". (* 折叠 *)
+Definition J35_11_GD : id := Id "J35_11_GD". (* 供电 *)
+Definition J35_11_JY : id := Id "J35_11_JY". (* 加油 *)
+Definition J35_11_GRDZT : id := Id "J35_11_GRDZT". (* 干扰弹装填 *)
+Definition J35_11_NMWQZZ : id := Id "J35_11_NMWQZZ". (* 内埋武器装载 *)
+Definition J35_11_GDDZ : id := Id "J35_11_GDDZ". (* 惯导对准 *)
+Definition J35_11_JWJC : id := Id "J35_11_RWJZ". (* 机务检查 *)
 
-(* 歼35_4 *)
-Definition J35_4_ZD : id := Id "J35_4_ZD". (* 折叠 *)
-Definition J35_4_GD : id := Id "J35_4_GD". (* 供电 *)
-Definition J35_4_JY : id := Id "J35_4_JY". (* 加油 *)
-Definition J35_4_GRDZT : id := Id "J35_4_GRDZT". (* 干扰弹装填 *)
-Definition J35_4_NMWQZZ : id := Id "J35_4_NMWQZZ". (* 内埋武器装载 *)
-Definition J35_4_GDDZ : id := Id "J15_4_GDDZ". (* 惯导对准 *)
-Definition J35_4_JWJC : id := Id "J15_4_RWJZ". (* 机务检查 *)
+(* 歼35_12 *)
+Definition J35_12_ZD : id := Id "J35_12_ZD". (* 折叠 *)
+Definition J35_12_GD : id := Id "J35_12_GD". (* 供电 *)
+Definition J35_12_JY : id := Id "J35_12_JY". (* 加油 *)
+Definition J35_12_GRDZT : id := Id "J35_12_GRDZT". (* 干扰弹装填 *)
+Definition J35_12_NMWQZZ : id := Id "J35_12_NMWQZZ". (* 内埋武器装载 *)
+Definition J35_12_GDDZ : id := Id "J35_12_GDDZ". (* 惯导对准 *)
+Definition J35_12_JWJC : id := Id "J35_12_RWJZ". (* 机务检查 *)
 
 (* 全局变量 *)
 Definition d1 : id := Id "d1".
 Definition d2 : id := Id "d2".
-Definition jyc_6 : id := Id "jyz_6".
-Definition jyc_17 : id := Id "jyz_17".
-Definition gdsb_12 : id := Id "gdsb_12".
-Definition gdsb_13 : id := Id "gdsb_13".
+Definition jyc_1 : id := Id "jyz_1".
+Definition jyc_2 : id := Id "jyz_2".
+Definition gdsb_6 : id := Id "gdsb_6".
+Definition gdsb_10 : id := Id "gdsb_10".
 
 
 (* 作业变量 *)
@@ -64,11 +64,11 @@ Definition o2_GD : id := Id "o2_GD".
 
 
 (* 阵位变量 *)
-Definition P7 : id := Id "P7".
-Definition P16 : id := Id "P16".
+Definition P1 : id := Id "P1".
+Definition P2 : id := Id "P2".
 
 (* 用于比较和判断的具体数值 *)
-Definition ZD1 : tuple4 := Triple4 129 26 0 1.
+Definition ZD1 : tuple4 := Triple4 274 536 1 1.
 Definition GD1 : tuple3 := Triple3 80 (large_to_nat 9060) (large_to_nat 9780).
 Definition JY1 : tuple3 := Triple3 80 (large_to_nat 9060) (large_to_nat 9780).  
 Definition JWJC1 : tuple3 := Triple3 80 (large_to_nat 9060) (large_to_nat 9660).     
@@ -76,7 +76,7 @@ Definition GDDZ1 : tuple3 := Triple3 80 (large_to_nat 9060) (large_to_nat 9540).
 Definition GRDZT1 : tuple3 := Triple3 80 (large_to_nat 8340) (large_to_nat 8940). 
 Definition NMWQZZ1 : tuple3 := Triple3 80 (large_to_nat 8340) (large_to_nat 9060).
 
-Definition ZD2 : tuple4 := Triple4 262 26 1 1.
+Definition ZD2 : tuple4 := Triple4 291 546 1 1.
 Definition GD2 : tuple3 := Triple3 80 (large_to_nat 8940) (large_to_nat 9660).
 Definition JY2 : tuple3 := Triple3 80 (large_to_nat 8940) (large_to_nat 9660).  
 Definition JWJC2 : tuple3 := Triple3 80 (large_to_nat 8940) (large_to_nat 9540).     
@@ -84,12 +84,12 @@ Definition GDDZ2 : tuple3 := Triple3 80 (large_to_nat 8940) (large_to_nat 9420).
 Definition GRDZT2 : tuple3 := Triple3 80 (large_to_nat 8220) (large_to_nat 8820). 
 Definition NMWQZZ2 : tuple3 := Triple3 80 (large_to_nat 8220) (large_to_nat 8940). 
 
-Definition D1  : nat := 1. (* 歼35_3 供电 *)
-Definition D2  : nat := 1. (* 歼35_4 供电 *)
-Definition R_JYC_6  : nat := 1. (* 6号加油车 *)
-Definition R_JYC_17  : nat := 1. (* 17号加油车 *)
-Definition R_GDSB_12  : nat := 1. (* 12号惯导设备 *)
-Definition R_GDSB_13  : nat := 1. (* 13号惯导设备 *)
+Definition D1  : nat := 1. (* 歼35_11 供电 *)
+Definition D2  : nat := 1. (* 歼35_12 供电 *)
+Definition R_JYC_1  : nat := 1. (* 1号加油车 *)
+Definition R_JYC_2  : nat := 1. (* 2号加油车 *)
+Definition R_GDSB_6  : nat := 1. (* 6号惯导设备 *)
+Definition R_GDSB_10  : nat := 1. (* 10号惯导设备 *)
 
 (*The definition of empty state*)
 Definition emp_sO : storeO :=

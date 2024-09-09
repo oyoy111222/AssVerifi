@@ -1,14 +1,14 @@
-Require Import CSSsVerification.
+Require Import CSSsVerification_Three.
 Require Import function.
+Require Import SafeinHo.
 Require Import SafeinHr.
 Require Import NeqDefinition.
-Require Import Aid.
-Require Export util.
 Require Export language.
 Require Export semantic.
 Require Export state.
-Require Import Coq.Strings.String.
-Require Import Coq.Classes.RelationClasses.
+Require Import BinNums.
+Require Import Coq.Lists.List.
+Require Import ZArith.
 Import ListNotations.
 
 (* 三机运行流程案例 *)
@@ -16,11 +16,9 @@ Definition EX_JZ_Three :=
   (o1_ZD ::=plan_ZD (Atuple4 (128;128;0;1)));;
   (o1_GY ::=plan_GY (Atuple3 (0;0;10)));;
   (o1_QYC ::=plan_QYC (Atuple2 (1;10)));;
-  (o1_TF ::=plan_TF (Atuple3 (51;10;20)));;
   (p1_M0 ::=asgn (OId o1_ZD));;
   (p1_M0 ::=att (OId o1_GY));;
   (p1_M0 ::=att (OId o1_QYC));;
-  (p1_M0 ::=att (OId o1_TF));;
   (c1 add 1);;
   (IF (BTr ZD1 C1) THEN SKIP ELSE CAbt FI);;
   (o2_ZD ::=plan_ZD (Atuple4 (113;128;1;1)));;
@@ -38,7 +36,6 @@ Definition EX_JZ_Three :=
   (z1_GY add 1);;
   (p1_M0 ::exe (ANum 1));;
   (c1 sub 1);;
-  (p1_M0 ::exe (ANum 1));;
   (free p1_M0);;
   (o1_ZD ::=plan_ZD (Atuple4 (148;128;1;1)));;
   (p1_M4 ::=asgn (OId o1_ZD));;
@@ -265,8 +262,8 @@ Proof.
   Hr39_40 
   ).
 
-  eapply E_Seq.
- - eapply E_Oplan_ZD with (loc := oloc_1) (loc1 := rloc_1) (loc2 := rloc_2) (loc3 := rloc_3)(loc4 := rloc_4).
+   eapply E_Seq.
+ - eapply E_Oplan_Tuple4 with (loc := oloc_1) (loc1 := rloc_1) (loc2 := rloc_2) (loc3 := rloc_3)(loc4 := rloc_4).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -278,7 +275,7 @@ Proof.
    reflexivity.
 
  - eapply E_Seq.
-   eapply E_Oplan_GY with (loc := oloc_2) (loc1 := rloc_5) (loc2 := rloc_6) (loc3 := rloc_7).
+   eapply E_Oplan_Tuple3 with (loc := oloc_2) (loc1 := rloc_5) (loc2 := rloc_6) (loc3 := rloc_7).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity.
@@ -314,7 +311,7 @@ Proof.
    auto.
 
    eapply E_Seq.
-   eapply E_Oplan_QYC with (loc := oloc_3) (loc1 := rloc_8) (loc2 := rloc_9).
+   eapply E_Oplan_Tuple2 with (loc := oloc_3) (loc1 := rloc_8) (loc2 := rloc_9).
    simpl; reflexivity.
    simpl; reflexivity.
    rewrite hR_update_neq. 
@@ -353,7 +350,40 @@ Proof.
    auto. auto.
 
    eapply E_Seq.
-   eapply E_Oplan_TF with (loc := oloc_4) (loc1 := rloc_10) (loc2 := rloc_11)(loc3 := rloc_12).
+   eapply E_Sasgn  with (loc := oloc_1).
+   simpl. reflexivity.
+
+   eapply E_Seq.
+   eapply E_Satt  with (loc := oloc_2).
+   simpl. reflexivity.
+   rewrite sS_update_eq; reflexivity.
+   intros. apply SafeinHo1_3.
+   auto. auto. auto. auto. auto. auto. auto. 
+   rewrite sS_update_shadow.
+
+   eapply E_Seq.
+   eapply E_Satt  with (loc := oloc_3).
+   simpl. reflexivity.
+   simpl. rewrite sS_update_eq;  reflexivity.
+   intros. apply SafeinHo2_3.
+   auto. auto. auto. auto. auto. auto. auto. 
+   rewrite sS_update_shadow.
+
+   eapply E_Seq.
+   eapply E_Radd_V. auto.
+   rewrite sV_add.
+   simpl.
+
+   eapply E_Seq.
+   eapply E_IfTure. 
+   simpl. 
+   unfold Tractor_need.
+   simpl. reflexivity.
+   eapply E_Skip.
+
+   eapply E_Seq.
+   eapply E_Oplan_Tuple4 with (loc := oloc_4) (loc1 := rloc_10) (loc2 := rloc_11) (loc3 := rloc_12)(loc4 := rloc_13).
+   simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -375,7 +405,7 @@ Proof.
    apply sym_not_eq; apply Hr6_10.
    apply sym_not_eq; apply Hr5_10.
    apply sym_not_eq; apply Hr9_10.
-   apply sym_not_eq; apply Hr8_10.
+   apply sym_not_eq; apply Hr8_10. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
@@ -394,7 +424,7 @@ Proof.
    apply sym_not_eq; apply Hr6_11.
    apply sym_not_eq; apply Hr5_11.
    apply sym_not_eq; apply Hr9_11.
-   apply sym_not_eq; apply Hr8_11.
+   apply sym_not_eq; apply Hr8_11. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
@@ -413,62 +443,13 @@ Proof.
    apply sym_not_eq; apply Hr6_12.
    apply sym_not_eq; apply Hr5_12.
    apply sym_not_eq; apply Hr9_12.
-   apply sym_not_eq; apply Hr8_12.
-   rewrite hO_update_neq.
-   rewrite hO_update_neq.
-   rewrite hO_update_neq.
-   reflexivity.
-   auto. auto. auto.
-
-   eapply E_Seq.
-   eapply E_Sasgn  with (loc := oloc_1).
-   simpl. reflexivity.
-
-   eapply E_Seq.
-   eapply E_Satt  with (loc := oloc_2).
-   simpl. reflexivity.
-   rewrite sS_update_eq; reflexivity.
-   rewrite sS_update_shadow.
-
-   eapply E_Seq.
-   eapply E_Satt  with (loc := oloc_3).
-   simpl. reflexivity.
-   rewrite sS_update_eq;  reflexivity.
-   rewrite sS_update_shadow.
-
-   eapply E_Seq.
-   eapply E_Satt  with (loc := oloc_4).
-   simpl. reflexivity.
-   rewrite sS_update_eq;  reflexivity.
-   rewrite sS_update_shadow.
-
-   eapply E_Seq.
-   eapply E_Radd. auto.
-   rewrite sV_add.
-   simpl.
-
-   eapply E_Seq.
-   eapply E_IfTure. 
-   simpl. 
-   unfold Tractor_need.
-   simpl. reflexivity.
-   eapply E_Skip.
-
-   eapply E_Seq.
-   eapply E_Oplan_ZD with (loc := oloc_5) (loc1 := rloc_13) (loc2 := rloc_14) (loc3 := rloc_15)(loc4 := rloc_16).
-   simpl; reflexivity. 
-   simpl; reflexivity. 
-   simpl; reflexivity. 
-   simpl; reflexivity. 
+   apply sym_not_eq; apply Hr8_12. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
    rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
@@ -482,21 +463,37 @@ Proof.
    apply sym_not_eq; apply Hr5_13.
    apply sym_not_eq; apply Hr9_13.
    apply sym_not_eq; apply Hr8_13. 
-   apply sym_not_eq; apply Hr12_13.
-   apply sym_not_eq; apply Hr11_13.
-   apply sym_not_eq; apply Hr10_13.
+   rewrite hO_update_neq.
+   rewrite hO_update_neq.
+   rewrite hO_update_neq.
+   reflexivity.
+   auto. auto. auto. 
+
+   eapply E_Seq.
+   eapply E_IfTure.
+   simpl. 
+   unfold unfoldWing.
+   simpl. reflexivity.
+   eapply E_Skip.
+
+   eapply E_Seq.
+   eapply E_Oplan_Tuple3 with (loc := oloc_5) (loc1 := rloc_14) (loc2 := rloc_15) (loc3 := rloc_16).      
+   simpl; reflexivity. 
+   simpl; reflexivity. 
+   simpl; reflexivity.
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
-   rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
-   rewrite hR_update_neq.
+   rewrite hR_update_neq. 
+   rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
+   rewrite hR_update_neq. 
    reflexivity.
    apply sym_not_eq; apply Hr4_14.
    apply sym_not_eq; apply Hr3_14.
@@ -507,21 +504,23 @@ Proof.
    apply sym_not_eq; apply Hr5_14.
    apply sym_not_eq; apply Hr9_14.
    apply sym_not_eq; apply Hr8_14. 
+   apply sym_not_eq; apply Hr13_14.
    apply sym_not_eq; apply Hr12_14.
    apply sym_not_eq; apply Hr11_14.
-   apply sym_not_eq; apply Hr10_14.
+   apply sym_not_eq; apply Hr10_14. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
-   rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
-   rewrite hR_update_neq.
+   rewrite hR_update_neq. 
+   rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
+   rewrite hR_update_neq. 
    reflexivity.
    apply sym_not_eq; apply Hr4_15.
    apply sym_not_eq; apply Hr3_15.
@@ -532,21 +531,23 @@ Proof.
    apply sym_not_eq; apply Hr5_15.
    apply sym_not_eq; apply Hr9_15.
    apply sym_not_eq; apply Hr8_15. 
+   apply sym_not_eq; apply Hr13_15.
    apply sym_not_eq; apply Hr12_15.
    apply sym_not_eq; apply Hr11_15.
-   apply sym_not_eq; apply Hr10_15.
+   apply sym_not_eq; apply Hr10_15. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
-   rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
-   rewrite hR_update_neq.
+   rewrite hR_update_neq. 
+   rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq.
+   rewrite hR_update_neq. 
    reflexivity.
    apply sym_not_eq; apply Hr4_16.
    apply sym_not_eq; apply Hr3_16.
@@ -557,27 +558,20 @@ Proof.
    apply sym_not_eq; apply Hr5_16.
    apply sym_not_eq; apply Hr9_16.
    apply sym_not_eq; apply Hr8_16. 
+   apply sym_not_eq; apply Hr13_16.
    apply sym_not_eq; apply Hr12_16.
    apply sym_not_eq; apply Hr11_16.
-   apply sym_not_eq; apply Hr10_16.
+   apply sym_not_eq; apply Hr10_16. 
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    reflexivity.
-   auto. auto. auto. auto.
+   auto. auto. auto. auto. 
 
    eapply E_Seq.
-   eapply E_IfTure.
-   simpl. 
-   unfold unfoldWing.
-   simpl. reflexivity.
-   eapply E_Skip.
-
-   eapply E_Seq.
-   eapply E_Oplan_GY with (loc := oloc_6) (loc1 := rloc_17) (loc2 := rloc_18) (loc3 := rloc_19).      
-   simpl; reflexivity. 
-   simpl; reflexivity. 
+   eapply E_Oplan_Tuple2 with (loc := oloc_6) (loc1 := rloc_17) (loc2 := rloc_18).
+   simpl; reflexivity.
    simpl; reflexivity.
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
@@ -605,13 +599,13 @@ Proof.
    apply sym_not_eq; apply Hr5_17.
    apply sym_not_eq; apply Hr9_17.
    apply sym_not_eq; apply Hr8_17. 
+   apply sym_not_eq; apply Hr13_17.
    apply sym_not_eq; apply Hr12_17.
    apply sym_not_eq; apply Hr11_17.
    apply sym_not_eq; apply Hr10_17.
    apply sym_not_eq; apply Hr16_17. 
    apply sym_not_eq; apply Hr15_17.
    apply sym_not_eq; apply Hr14_17.
-   apply sym_not_eq; apply Hr13_17.
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
@@ -638,46 +632,13 @@ Proof.
    apply sym_not_eq; apply Hr5_18.
    apply sym_not_eq; apply Hr9_18.
    apply sym_not_eq; apply Hr8_18. 
+   apply sym_not_eq; apply Hr13_18.
    apply sym_not_eq; apply Hr12_18.
    apply sym_not_eq; apply Hr11_18.
    apply sym_not_eq; apply Hr10_18.
    apply sym_not_eq; apply Hr16_18. 
    apply sym_not_eq; apply Hr15_18.
    apply sym_not_eq; apply Hr14_18.
-   apply sym_not_eq; apply Hr13_18.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   reflexivity.
-   apply sym_not_eq; apply Hr4_19.
-   apply sym_not_eq; apply Hr3_19.
-   apply sym_not_eq; apply Hr2_19.
-   apply sym_not_eq; apply Hr1_19.
-   apply sym_not_eq; apply Hr7_19.
-   apply sym_not_eq; apply Hr6_19.
-   apply sym_not_eq; apply Hr5_19.
-   apply sym_not_eq; apply Hr9_19.
-   apply sym_not_eq; apply Hr8_19. 
-   apply sym_not_eq; apply Hr12_19.
-   apply sym_not_eq; apply Hr11_19.
-   apply sym_not_eq; apply Hr10_19.
-   apply sym_not_eq; apply Hr16_19. 
-   apply sym_not_eq; apply Hr15_19.
-   apply sym_not_eq; apply Hr14_19.
-   apply sym_not_eq; apply Hr13_19.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
@@ -687,114 +648,27 @@ Proof.
    auto. auto. auto. auto. auto.
 
    eapply E_Seq.
-   eapply E_Oplan_QYC with (loc := oloc_7) (loc1 := rloc_20) (loc2 := rloc_21).
-   simpl; reflexivity.
-   simpl; reflexivity.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq.
-   rewrite hR_update_neq.
-   rewrite hR_update_neq.
-   reflexivity.
-   apply sym_not_eq; apply Hr4_20.
-   apply sym_not_eq; apply Hr3_20.
-   apply sym_not_eq; apply Hr2_20.
-   apply sym_not_eq; apply Hr1_20.
-   apply sym_not_eq; apply Hr7_20.
-   apply sym_not_eq; apply Hr6_20.
-   apply sym_not_eq; apply Hr5_20.
-   apply sym_not_eq; apply Hr9_20.
-   apply sym_not_eq; apply Hr8_20. 
-   apply sym_not_eq; apply Hr12_20.
-   apply sym_not_eq; apply Hr11_20.
-   apply sym_not_eq; apply Hr10_20.
-   apply sym_not_eq; apply Hr16_20. 
-   apply sym_not_eq; apply Hr15_20.
-   apply sym_not_eq; apply Hr14_20.
-   apply sym_not_eq; apply Hr13_20.
-   apply sym_not_eq; apply Hr19_20.
-   apply sym_not_eq; apply Hr18_20.
-   apply sym_not_eq; apply Hr17_20.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq. 
-   rewrite hR_update_neq.
-   rewrite hR_update_neq.
-   rewrite hR_update_neq.
-   rewrite hR_update_neq.
-   reflexivity.
-   apply sym_not_eq; apply Hr4_21.
-   apply sym_not_eq; apply Hr3_21.
-   apply sym_not_eq; apply Hr2_21.
-   apply sym_not_eq; apply Hr1_21.
-   apply sym_not_eq; apply Hr7_21.
-   apply sym_not_eq; apply Hr6_21.
-   apply sym_not_eq; apply Hr5_21.
-   apply sym_not_eq; apply Hr9_21.
-   apply sym_not_eq; apply Hr8_21. 
-   apply sym_not_eq; apply Hr12_21.
-   apply sym_not_eq; apply Hr11_21.
-   apply sym_not_eq; apply Hr10_21.
-   apply sym_not_eq; apply Hr16_21. 
-   apply sym_not_eq; apply Hr15_21.
-   apply sym_not_eq; apply Hr14_21.
-   apply sym_not_eq; apply Hr13_21.
-   apply sym_not_eq; apply Hr19_21.
-   apply sym_not_eq; apply Hr18_21.
-   apply sym_not_eq; apply Hr17_21.
-   rewrite hO_update_neq.
-   rewrite hO_update_neq.
-   rewrite hO_update_neq.
-   rewrite hO_update_neq.
-   rewrite hO_update_neq.
-   rewrite hO_update_neq.
-   reflexivity.
-   auto. auto. auto. auto. auto. auto.
+   eapply E_Sasgn  with (loc := oloc_4).
+   simpl. reflexivity.
 
    eapply E_Seq.
-   eapply E_Sasgn  with (loc := oloc_5).
+   eapply E_Satt  with (loc := oloc_5).
    simpl. reflexivity.
+   rewrite sS_update_eq; reflexivity.
+   intros. 
+   apply SafeinHo1_3; auto.
+   rewrite sS_update_shadow.
 
    eapply E_Seq.
    eapply E_Satt  with (loc := oloc_6).
    simpl. reflexivity.
-   rewrite sS_update_eq; reflexivity.
+   simpl; rewrite sS_update_eq;  reflexivity.
+   intros. 
+   apply SafeinHo2_3; auto.
    rewrite sS_update_shadow.
 
    eapply E_Seq.
-   eapply E_Satt  with (loc := oloc_7).
-   simpl. reflexivity.
-   rewrite sS_update_eq;  reflexivity.
-   rewrite sS_update_shadow.
-
-   eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    simpl.
 
@@ -821,11 +695,9 @@ Proof.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
-   rewrite sO_update_neq.
    rewrite sO_update_eq.
    auto.
-   discriminate. discriminate. discriminate. discriminate. discriminate. discriminate.
-   rewrite hO_update_neq.
+   discriminate. discriminate. discriminate. discriminate. discriminate. 
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
@@ -833,28 +705,17 @@ Proof.
    rewrite hO_update_neq.
    rewrite hO_update_eq.
    reflexivity.
-   auto. auto. auto. auto. auto. auto.
-   intros. apply SafeinHr4_21.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr4_18; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
    rewrite hO_remove_neq.
    rewrite hO_remove_neq. 
    rewrite hO_remove_neq.
-   rewrite hO_remove_neq. 
    rewrite hO_remove_work.
    unfold hR_removes.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
@@ -870,12 +731,11 @@ Proof.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_work. rewrite hR_remove_work. rewrite hR_remove_work. rewrite hR_remove_work.
-   rewrite sS_update_shadow_3.  rewrite sO_update_shadow_8.
+   rewrite sS_update_shadow_3.  rewrite sO_update_shadow_7.
 
    eapply E_Seq.
    eapply E_Sexe with (loc := oloc_2)(e :=o1_GY).
    rewrite sS_update_eq. reflexivity.
-   rewrite sO_update_neq.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
@@ -887,27 +747,20 @@ Proof.
    simpl; discriminate.
    simpl; discriminate.
    simpl; discriminate.
-   simpl; discriminate.
-   rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_eq.
    reflexivity.
-   auto. auto. auto. auto. auto. auto.
-   intros. apply SafeinHr3_17.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr3_14; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
    rewrite hO_remove_neq.
    rewrite hO_remove_neq. 
-   rewrite hO_remove_neq.
    rewrite hO_remove_work.
    unfold hR_removes.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
@@ -918,14 +771,12 @@ Proof.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. 
+   rewrite hR_remove_neq. 
    rewrite hR_remove_work. rewrite hR_remove_work. rewrite hR_remove_work.
-   rewrite sS_update_shadow.  rewrite sO_update_shadow_8.
+   rewrite sS_update_shadow.  rewrite sO_update_shadow_7.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    simpl.
 
@@ -937,28 +788,21 @@ Proof.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
-   rewrite sO_update_neq.
    rewrite sO_update_eq. reflexivity.
    simpl; discriminate.
    simpl; discriminate.
    simpl; discriminate.
    simpl; discriminate.
    simpl; discriminate.
-   simpl; discriminate.
-   rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto.
-   intros. apply SafeinHr2_14.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   simpl. 
-   rewrite hO_remove_neq.   
+   intros. 
+   apply SafeinHr2_11; auto.
+   simpl.   
    rewrite hO_remove_neq.
    rewrite hO_remove_neq.
    rewrite hO_remove_neq. 
@@ -968,56 +812,13 @@ Proof.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
+   rewrite hR_remove_neq. rewrite hR_remove_neq. 
    rewrite hR_remove_work. rewrite hR_remove_work.
-   rewrite sS_update_shadow.  rewrite sO_update_shadow_8.
+   rewrite sS_update_shadow.  rewrite sO_update_shadow_7.
 
    eapply E_Seq.
-   eapply E_Rsub. auto.
+   eapply E_Rsub_V. auto.
    simpl; rewrite sV_update_shadow_4.
-
-   eapply E_Seq.
-   eapply E_Sexe with (loc := oloc_4)(e :=o1_TF).
-   rewrite sS_update_eq. reflexivity.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
-   rewrite sO_update_neq.
-   rewrite sO_update_eq. reflexivity.
-   simpl; discriminate.
-   simpl; discriminate.
-   simpl; discriminate.
-   simpl; discriminate.
-   simpl; discriminate.
-   simpl; discriminate.
-   rewrite hO_update_neq.
-   rewrite hO_update_neq.
-   rewrite hO_update_neq.
-   rewrite hO_update_eq.
-   reflexivity.
-   auto. auto. auto.
-   intros. apply SafeinHr3_12.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   simpl. 
-   rewrite hO_remove_neq.   
-   rewrite hO_remove_neq.
-   rewrite hO_remove_neq.
-   rewrite hO_remove_work.
-   unfold hR_removes.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
-   rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. 
-   rewrite hR_remove_work. rewrite hR_remove_work. rewrite hR_remove_work.
-   rewrite sS_update_shadow.  rewrite sO_update_shadow_8.
 
    eapply E_Seq.
    eapply E_Sfree.
@@ -1025,7 +826,7 @@ Proof.
    rewrite sS_update_shadow.
 
    eapply E_Seq.
-   eapply E_Oplan_ZD with (loc := oloc_1) (loc1 := rloc_1) (loc2 := rloc_2) (loc3 := rloc_3)(loc4 := rloc_4).
+   eapply E_Oplan_Tuple4 with (loc := oloc_1) (loc1 := rloc_1) (loc2 := rloc_2) (loc3 := rloc_3)(loc4 := rloc_4).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -1079,7 +880,7 @@ Proof.
    rewrite hO_update_neq.
    reflexivity.
    auto. auto. auto.
-   rewrite sO_update_shadow_4.
+   rewrite sO_update_shadow_3.
 
    eapply E_Seq.
    eapply E_Sasgn  with (loc := oloc_1).
@@ -1093,7 +894,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_GD with (loc := oloc_2) (loc1 := rloc_5) (loc2 := rloc_6) (loc3 := rloc_7).
+   eapply E_Oplan_Tuple3 with (loc := oloc_2) (loc1 := rloc_5) (loc2 := rloc_6) (loc3 := rloc_7).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -1153,12 +954,12 @@ Proof.
    auto. auto. auto. auto.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    simpl.
 
    eapply E_Seq.
-   eapply E_Oplan_JY with (loc := oloc_3) (loc1 := rloc_10) (loc2 := rloc_11) (loc3 := rloc_12).
+   eapply E_Oplan_Tuple3 with (loc := oloc_3) (loc1 := rloc_19) (loc2 := rloc_20) (loc3 := rloc_21).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity.  
@@ -1177,10 +978,10 @@ Proof.
    rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
-   rewrite hR_update_neq.
+   rewrite hR_update_neq. 
    reflexivity. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.  
-   auto. auto. auto. auto. auto. auto. 
+   auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   auto. auto. auto. auto. auto. auto. auto. auto. 
    rewrite hR_update_neq.
    rewrite hR_update_neq. 
    rewrite hR_update_neq. 
@@ -1231,13 +1032,17 @@ Proof.
    eapply E_Satt  with (loc := oloc_2).
    simpl. reflexivity.
    rewrite sS_update_eq;  reflexivity.
+   intros. apply SafeinHo1_3.
+   auto. auto. auto. auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
    eapply E_Seq.
    eapply E_Satt  with (loc := oloc_3).
    simpl. reflexivity.
-   rewrite sS_update_eq;  reflexivity.
+   simpl; rewrite sS_update_eq;  reflexivity.
+   intros. apply SafeinHo2_3.
+   auto. auto. auto. auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
@@ -1248,7 +1053,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_QYC with (loc := oloc_4) (loc1 := rloc_8) (loc2 := rloc_9).
+   eapply E_Oplan_Tuple2 with (loc := oloc_7) (loc1 := rloc_8) (loc2 := rloc_9).
    simpl; reflexivity.
    simpl; reflexivity.
    rewrite hR_update_neq. 
@@ -1303,17 +1108,19 @@ Proof.
    rewrite hO_update_neq.
    reflexivity.
    auto. auto. auto. auto. auto. auto.
-   rewrite sO_update_shadow_5.
+   rewrite sO_update_shadow_4.
 
    eapply E_Seq.
-   eapply E_Satt  with (loc := oloc_4).
+   eapply E_Satt  with (loc := oloc_7).
    simpl. reflexivity.
    rewrite sS_update_eq;  reflexivity.
+   intros. 
+   apply SafeinHo3_4; auto.
    rewrite sS_update_shadow.
    simpl.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    rewrite sV_update_shadow_3.
 
@@ -1325,7 +1132,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_ZD with (loc := oloc_8) (loc1 := rloc_25) (loc2 := rloc_26) (loc3 := rloc_27)(loc4 := rloc_28).
+   eapply E_Oplan_Tuple4 with (loc := oloc_8) (loc1 := rloc_25) (loc2 := rloc_26) (loc3 := rloc_27)(loc4 := rloc_28).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -1420,7 +1227,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_GY with (loc := oloc_9) (loc1 := rloc_22) (loc2 := rloc_23) (loc3 := rloc_24).      
+   eapply E_Oplan_Tuple3 with (loc := oloc_9) (loc1 := rloc_22) (loc2 := rloc_23) (loc3 := rloc_24).      
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity.
@@ -1523,6 +1330,8 @@ Proof.
    eapply E_Satt  with (loc := oloc_9).
    simpl. reflexivity.
    rewrite sS_update_eq;  reflexivity.
+   intros. 
+   apply SafeinHo1_2; auto.
    rewrite sS_update_shadow.
    simpl.
 
@@ -1540,7 +1349,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Sexe with (loc := oloc_5)(e :=o2_ZD).
+   eapply E_Sexe with (loc := oloc_4)(e :=o2_ZD).
    rewrite sS_update_neq.
    rewrite sS_update_neq.
    rewrite sS_update_eq. reflexivity.
@@ -1555,9 +1364,7 @@ Proof.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
-   rewrite sO_update_neq.
    rewrite sO_update_eq. reflexivity.
-   simpl; discriminate.
    simpl; discriminate.
    simpl; discriminate.
    simpl; discriminate.
@@ -1578,20 +1385,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto.
-   intros. apply SafeinHr4_28.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr4_28; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -1628,12 +1423,11 @@ Proof.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_work. rewrite hR_remove_work. rewrite hR_remove_work. rewrite hR_remove_work.
-   rewrite sS_update_shadow_4.  rewrite sO_update_shadow_12.
+   rewrite sS_update_shadow_4.  rewrite sO_update_shadow_11.
 
    eapply E_Seq.
-   eapply E_Sexe with (loc := oloc_6)(e :=o2_GY).
+   eapply E_Sexe with (loc := oloc_5)(e :=o2_GY).
    rewrite sS_update_eq. reflexivity.
-   rewrite sO_update_neq.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
@@ -1653,7 +1447,6 @@ Proof.
    simpl; discriminate.
    simpl; discriminate.
    simpl; discriminate.
-   simpl; discriminate.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
@@ -1664,17 +1457,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto.
-   intros. apply SafeinHr3_24.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr3_24; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -1702,17 +1486,16 @@ Proof.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_work. rewrite hR_remove_work. rewrite hR_remove_work. 
-   rewrite sS_update_shadow.  rewrite sO_update_shadow_12.
+   rewrite sS_update_shadow.  rewrite sO_update_shadow_11.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    simpl.
 
    eapply E_Seq.
-   eapply E_Sexe with (loc := oloc_7)(e :=o2_QYC).
+   eapply E_Sexe with (loc := oloc_6)(e :=o2_QYC).
    rewrite sS_update_eq. reflexivity.
-   rewrite sO_update_neq.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
    rewrite sO_update_neq.
@@ -1732,7 +1515,6 @@ Proof.
    simpl; discriminate.
    simpl; discriminate.
    simpl; discriminate.
-   simpl; discriminate.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
    rewrite hO_update_neq.
@@ -1742,15 +1524,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr2_21.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr2_21; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -1771,10 +1546,10 @@ Proof.
    rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq. rewrite hR_remove_neq.
    rewrite hR_remove_neq. rewrite hR_remove_neq. 
    rewrite hR_remove_work. rewrite hR_remove_work.
-   rewrite sS_update_shadow.  rewrite sO_update_shadow_12.
+   rewrite sS_update_shadow.  rewrite sO_update_shadow_11.
 
    eapply E_Seq.
-   eapply E_Rsub. auto.
+   eapply E_Rsub_V. auto.
    simpl; rewrite sV_update_shadow_6.
 
    eapply E_Seq.
@@ -1783,7 +1558,7 @@ Proof.
    rewrite sS_update_shadow.
 
    eapply E_Seq.
-   eapply E_Oplan_ZD with (loc := oloc_5) (loc1 := rloc_13) (loc2 := rloc_14) (loc3 := rloc_15)(loc4 := rloc_16).
+   eapply E_Oplan_Tuple4 with (loc := oloc_4) (loc1 := rloc_13) (loc2 := rloc_14) (loc3 := rloc_15)(loc4 := rloc_16).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -1851,7 +1626,7 @@ Proof.
    rewrite sO_update_shadow_3.
 
    eapply E_Seq.
-   eapply E_Sasgn  with (loc := oloc_5).
+   eapply E_Sasgn  with (loc := oloc_4).
    simpl. reflexivity.
 
    eapply E_Seq.
@@ -1869,7 +1644,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_GD with (loc := oloc_6) (loc1 := rloc_17) (loc2 := rloc_18) (loc3 := rloc_19).
+   eapply E_Oplan_Tuple3 with (loc := oloc_5) (loc1 := rloc_10) (loc2 := rloc_11) (loc3 := rloc_12).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -1962,19 +1737,21 @@ Proof.
    auto. auto. auto. auto. auto. auto. auto.
 
    eapply E_Seq.
-   eapply E_Satt  with (loc := oloc_6).
+   eapply E_Satt  with (loc := oloc_5).
    simpl. reflexivity.
    rewrite sS_update_eq;  reflexivity.
+   intros. apply SafeinHo1_2.
+   auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    simpl.
 
    eapply E_Seq.
-   eapply E_Oplan_JY with (loc := oloc_7) (loc1 := rloc_29) (loc2 := rloc_30) (loc3 := rloc_31).
+   eapply E_Oplan_Tuple3 with (loc := oloc_6) (loc1 := rloc_29) (loc2 := rloc_30) (loc3 := rloc_31).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity.  
@@ -2077,9 +1854,11 @@ Proof.
    auto. auto. auto. auto. auto. auto. auto. auto.
 
    eapply E_Seq.
-   eapply E_Satt  with (loc := oloc_7).
+   eapply E_Satt  with (loc := oloc_6).
    simpl. reflexivity.
    rewrite sS_update_eq;  reflexivity.
+   intros. apply SafeinHo2_3.
+   auto. auto. auto. auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
@@ -2090,7 +1869,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_TF with (loc := oloc_10) (loc1 := rloc_32) (loc2 := rloc_33)(loc3 := rloc_34).
+   eapply E_Oplan_Tuple3 with (loc := oloc_10) (loc1 := rloc_32) (loc2 := rloc_33)(loc3 := rloc_34).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -2164,6 +1943,8 @@ Proof.
    eapply E_Satt  with (loc := oloc_10).
    simpl. reflexivity.
    rewrite sS_update_eq;  reflexivity.
+   intros. 
+   apply SafeinHo3_4; auto.
    rewrite sS_update_shadow.
    simpl.
 
@@ -2174,7 +1955,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_QYC with (loc := oloc_11) (loc1 := rloc_20) (loc2 := rloc_21).
+   eapply E_Oplan_Tuple2 with (loc := oloc_11) (loc1 := rloc_17) (loc2 := rloc_18).
    simpl; reflexivity.
    simpl; reflexivity.
    rewrite hR_update_neq. rewrite hR_update_neq. 
@@ -2233,11 +2014,13 @@ Proof.
    eapply E_Satt  with (loc := oloc_11).
    simpl. reflexivity.
    rewrite sS_update_eq;  reflexivity.
+   intros. 
+   apply SafeinHo4_5; auto.
    rewrite sS_update_shadow.
    simpl.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    rewrite sV_update_shadow_3.
 
@@ -2285,15 +2068,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto.
-   intros. apply SafeinHr4_22.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr4_22; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -2350,13 +2126,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto.
-   intros. apply SafeinHr3_18.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr3_18; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -2381,7 +2152,7 @@ Proof.
    rewrite sS_update_shadow. rewrite sO_update_shadow_9.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    simpl.
 
@@ -2391,7 +2162,7 @@ Proof.
    rewrite sS_update_shadow.
 
    eapply E_Seq.
-   eapply E_Oplan_ZD with (loc := oloc_8) (loc1 := rloc_25) (loc2 := rloc_26) (loc3 := rloc_27)(loc4 := rloc_28).
+   eapply E_Oplan_Tuple4 with (loc := oloc_8) (loc1 := rloc_25) (loc2 := rloc_26) (loc3 := rloc_27)(loc4 := rloc_28).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -2496,7 +2267,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_GD with (loc := oloc_9) (loc1 := rloc_22) (loc2 := rloc_23) (loc3 := rloc_24).
+   eapply E_Oplan_Tuple3 with (loc := oloc_9) (loc1 := rloc_22) (loc2 := rloc_23) (loc3 := rloc_24).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -2574,15 +2345,17 @@ Proof.
    eapply E_Satt  with (loc := oloc_9).
    simpl. reflexivity.
    rewrite sS_update_eq; reflexivity.
+   intros. apply SafeinHo1_2.
+   auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
-   eapply E_Oplan_JY with (loc := oloc_12) (loc1 := rloc_35) (loc2 := rloc_36) (loc3 := rloc_37).
+   eapply E_Oplan_Tuple3 with (loc := oloc_12) (loc1 := rloc_35) (loc2 := rloc_36) (loc3 := rloc_37).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity.  
@@ -2664,6 +2437,8 @@ Proof.
    eapply E_Satt  with (loc := oloc_12).
    simpl. reflexivity.
    rewrite sS_update_eq; reflexivity.
+   intros. apply SafeinHo2_3.
+   auto. auto. auto. auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
@@ -2674,7 +2449,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_TF with (loc := oloc_13) (loc1 := rloc_38) (loc2 := rloc_39)(loc3 := rloc_40).
+   eapply E_Oplan_Tuple3 with (loc := oloc_13) (loc1 := rloc_38) (loc2 := rloc_39)(loc3 := rloc_40).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -2763,6 +2538,8 @@ Proof.
    eapply E_Satt  with (loc := oloc_13).
    simpl. reflexivity.
    rewrite sS_update_eq; reflexivity.
+   intros. apply SafeinHo3_4.
+   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
@@ -2826,33 +2603,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   intros. apply SafeinHr4_40.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.  
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.   
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr4_40; auto.
    simpl.
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -2934,28 +2686,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr3_36.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr3_36; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -2999,7 +2731,7 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_16.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
@@ -3028,25 +2760,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr3_33.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr3_33; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -3087,15 +2802,15 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_16.
 
    eapply E_Seq.
-   eapply E_Rsub. auto.
+   eapply E_Rsub_V. auto.
    simpl; rewrite sV_update_shadow_9.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
-   eapply E_Sexe with (loc := oloc_4)(e :=o1_QYC).
+   eapply E_Sexe with (loc := oloc_7)(e :=o1_QYC).
    rewrite sS_update_eq. reflexivity.
    rewrite sO_update_neq. rewrite sO_update_neq.
    rewrite sO_update_neq. rewrite sO_update_neq.
@@ -3120,22 +2835,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr2_30.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.    
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr2_30; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -3166,7 +2867,7 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_16.
 
    eapply E_Seq.
-   eapply E_Rsub. auto.
+   eapply E_Rsub_V. auto.
    simpl; rewrite sV_update_shadow_10.
 
    eapply E_Seq.
@@ -3175,7 +2876,7 @@ Proof.
    rewrite sS_update_shadow.
 
    eapply E_Seq.
-   eapply E_Oplan_ZD with (loc := oloc_1) (loc1 := rloc_1) (loc2 := rloc_2) (loc3 := rloc_3)(loc4 := rloc_4).
+   eapply E_Oplan_Tuple4 with (loc := oloc_1) (loc1 := rloc_1) (loc2 := rloc_2) (loc3 := rloc_3)(loc4 := rloc_4).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -3280,7 +2981,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_GD with (loc := oloc_2) (loc1 := rloc_5) (loc2 := rloc_6) (loc3 := rloc_7).
+   eapply E_Oplan_Tuple3 with (loc := oloc_2) (loc1 := rloc_5) (loc2 := rloc_6) (loc3 := rloc_7).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -3359,16 +3060,18 @@ Proof.
    eapply E_Satt  with (loc := oloc_2).
    simpl. reflexivity.
    rewrite sS_update_eq; reflexivity.
+   intros. apply SafeinHo1_2.
+   auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
    rewrite sV_update_shadow_4.
 
    eapply E_Seq.
-   eapply E_Oplan_TF with (loc := oloc_3) (loc1 := rloc_10) (loc2 := rloc_11) (loc3 := rloc_12).
+   eapply E_Oplan_Tuple3 with (loc := oloc_3) (loc1 := rloc_19) (loc2 := rloc_20) (loc3 := rloc_21).
    simpl; reflexivity. 
    simpl; reflexivity. 
    simpl; reflexivity. 
@@ -3448,12 +3151,13 @@ Proof.
    rewrite hO_update_neq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   rewrite sV_update_shadow_17.
 
    eapply E_Seq.
    eapply E_Satt  with (loc := oloc_3).
    simpl. reflexivity.
    rewrite sS_update_eq; reflexivity.
+   intros. apply SafeinHo2_3.
+   auto. auto. auto. auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
@@ -3464,7 +3168,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Oplan_QYC with (loc := oloc_4) (loc1 := rloc_8) (loc2 := rloc_9).
+   eapply E_Oplan_Tuple2 with (loc := oloc_7) (loc1 := rloc_8) (loc2 := rloc_9).
    simpl; reflexivity.
    simpl; reflexivity.
    rewrite hR_update_neq. rewrite hR_update_neq.
@@ -3525,10 +3229,10 @@ Proof.
    rewrite hO_update_neq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   rewrite sV_update_shadow_5.
+   rewrite sO_update_shadow_4.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
@@ -3539,9 +3243,11 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Satt  with (loc := oloc_4).
+   eapply E_Satt  with (loc := oloc_7).
    simpl. reflexivity.
    rewrite sS_update_eq; reflexivity.
+   intros. apply SafeinHo3_4.
+   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
    rewrite sS_update_shadow.
    simpl.
 
@@ -3558,7 +3264,7 @@ Proof.
    eapply E_Skip.
 
    eapply E_Seq.
-   eapply E_Sexe with (loc := oloc_5)(e :=o2_ZD).
+   eapply E_Sexe with (loc := oloc_4)(e :=o2_ZD).
    rewrite sS_update_neq.
    rewrite sS_update_neq.
    rewrite sS_update_neq.
@@ -3591,33 +3297,8 @@ Proof.
    rewrite hO_update_neq. rewrite hO_update_neq.
    rewrite hO_update_eq. reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr4_40.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.  
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.   
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr4_40; auto.
    simpl.
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -3673,7 +3354,7 @@ Proof.
    rewrite sS_update_shadow_6.  rewrite sO_update_shadow_16.
    
    eapply E_Seq.
-   eapply E_Sexe with (loc := oloc_6)(e :=o2_GD).
+   eapply E_Sexe with (loc := oloc_5)(e :=o2_GD).
    rewrite sS_update_eq. reflexivity.
    rewrite sO_update_neq. rewrite sO_update_neq.
    rewrite sO_update_neq. rewrite sO_update_neq.
@@ -3699,28 +3380,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr3_36.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr3_36; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -3764,11 +3425,11 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_16.
    
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
-   eapply E_Sexe with (loc := oloc_7)(e :=o2_JY).
+   eapply E_Sexe with (loc := oloc_6)(e :=o2_JY).
    rewrite sS_update_eq. reflexivity.
    rewrite sO_update_neq. rewrite sO_update_neq.
    rewrite sO_update_neq. rewrite sO_update_neq.
@@ -3793,25 +3454,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr3_33.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr3_33; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -3852,7 +3496,7 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_16.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
@@ -3881,22 +3525,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr3_30.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr3_30; auto.
    simpl. 
    rewrite hO_remove_neq.   
    rewrite hO_remove_neq.
@@ -3934,11 +3564,11 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_16.
 
    eapply E_Seq.
-   eapply E_Rsub. auto.
+   eapply E_Rsub_V. auto.
    simpl; rewrite sV_update_shadow_12.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
@@ -3966,22 +3596,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr2_27.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.    
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr2_27; auto.
    simpl. 
    rewrite hO_remove_neq. rewrite hO_remove_neq.   
    rewrite hO_remove_neq. rewrite hO_remove_neq.
@@ -4006,7 +3622,7 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_16.
 
    eapply E_Seq.
-   eapply E_Rsub. auto.
+   eapply E_Rsub_V. auto.
    simpl; rewrite sV_update_shadow_13.
 
    eapply E_Seq.
@@ -4057,18 +3673,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity.
    auto. auto. auto. auto. auto. auto. auto.
-   intros. apply SafeinHr4_25.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr4_25; auto.
    simpl.  
    rewrite hO_remove_neq. rewrite hO_remove_neq.
    rewrite hO_remove_neq. rewrite hO_remove_neq.
@@ -4124,15 +3730,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity. 
    auto. auto. auto. auto. auto. auto.
-   intros. apply SafeinHr3_21.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr3_21; auto.
    simpl. 
    rewrite hO_remove_neq. rewrite hO_remove_neq.   
    rewrite hO_remove_neq. rewrite hO_remove_neq.
@@ -4157,11 +3756,11 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_15.
 
    eapply E_Seq.
-   eapply E_Rsub. auto.
+   eapply E_Rsub_V. auto.
    simpl; rewrite sV_update_shadow_12.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
@@ -4188,13 +3787,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity. 
    auto. auto. auto. auto. auto. 
-   intros. apply SafeinHr3_18.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr3_18; auto.
    simpl. 
    rewrite hO_remove_neq. rewrite hO_remove_neq.   
    rewrite hO_remove_neq. rewrite hO_remove_neq.
@@ -4217,7 +3811,7 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_15.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
@@ -4243,11 +3837,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity. 
    auto. auto. auto. auto. 
-   intros. apply SafeinHr3_15.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr3_15; auto.
    simpl. 
    rewrite hO_remove_neq. rewrite hO_remove_neq.   
    rewrite hO_remove_neq. rewrite hO_remove_neq. 
@@ -4266,7 +3857,7 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_15.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
@@ -4311,10 +3902,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity. 
    auto. auto. auto.  
-   intros. apply SafeinHr4_12.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   intros. 
+   apply SafeinHr4_12; auto.
    simpl. 
    rewrite hO_remove_neq. rewrite hO_remove_neq.   
    rewrite hO_remove_neq.  
@@ -4351,9 +3940,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity. 
    auto. auto.
-   intros. apply SafeinHr3_8.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
-   auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr3_8; auto.
    simpl. 
    rewrite hO_remove_neq. rewrite hO_remove_neq.   
    rewrite hO_remove_work.
@@ -4366,11 +3954,11 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_14.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    simpl; rewrite sV_update_shadow_15.
 
    eapply E_Seq.
-   eapply E_Rsub. auto.
+   eapply E_Rsub_V. auto.
    simpl; rewrite sV_update_shadow_13.
 
    eapply E_Seq.
@@ -4393,8 +3981,8 @@ Proof.
    rewrite hO_update_eq.
    reflexivity. 
    auto. 
-   intros. apply SafeinHr3_5.
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
+   intros. 
+   apply SafeinHr3_5; auto.
    simpl. 
    rewrite hO_remove_neq. 
    rewrite hO_remove_work.
@@ -4405,11 +3993,11 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_14.
 
    eapply E_Seq.
-   eapply E_Radd. auto.
+   eapply E_Radd_V. auto.
    rewrite sV_add.
 
    eapply E_Seq.
-   eapply E_Sexe with (loc := oloc_4)(e :=o1_QYC).
+   eapply E_Sexe with (loc := oloc_7)(e :=o1_QYC).
    rewrite sS_update_eq. reflexivity.
    rewrite sO_update_neq. rewrite sO_update_neq.
    rewrite sO_update_neq. rewrite sO_update_neq.
@@ -4435,7 +4023,7 @@ Proof.
    rewrite sS_update_shadow.  rewrite sO_update_shadow_14.
 
    eapply E_Seq.
-   eapply E_Rsub. auto.
+   eapply E_Rsub_V. auto.
    simpl; rewrite sV_update_shadow_14.
 
    eapply E_Seq.
@@ -4658,8 +4246,7 @@ Proof.
    auto. auto. auto. auto. auto. auto. auto. auto.
    unfold not_in_domR. auto.
    unfold not_in_domR. rewrite hR_update_neq. auto. auto.
-   unfold not_in_domR. rewrite hR_update_neq. rewrite hR_update_neq. auto. auto. auto. 
-   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
+   auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. 
    unfold not_in_domO. auto.
    auto. auto. auto.
    unfold not_in_domR. auto.
@@ -4667,8 +4254,6 @@ Proof.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
    unfold not_in_domO. auto.
    auto. auto. auto. auto. 
-   unfold not_in_domR. auto.
-   unfold not_in_domR. rewrite hR_update_neq. auto. auto.
    unfold not_in_domR. rewrite hR_update_neq. rewrite hR_update_neq. auto. auto. auto.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
@@ -4682,7 +4267,7 @@ Proof.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
    auto. auto. auto. auto.
    unfold not_in_domO. auto.
-   auto. auto. auto. auto. auto. auto.
+   auto. auto. auto. auto. auto.
    Unshelve.
    auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto. auto.
 Qed.

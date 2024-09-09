@@ -35,9 +35,9 @@ Definition J35_4_JWJC : id := Id "J15_4_RWJZ". (* 机务检查 *)
 Definition d1 : id := Id "d1".
 Definition d2 : id := Id "d2".
 Definition jyc_6 : id := Id "jyz_6".
-Definition jyc_17 : id := Id "jyz_17".
-Definition gdsb_12 : id := Id "gdsb_12".
-Definition gdsb_13 : id := Id "gdsb_13".
+Definition jyc_12 : id := Id "jyz_12".
+Definition gdsb_4 : id := Id "gdsb_4".
+Definition gdsb_5 : id := Id "gdsb_5".
 
 
 (* 作业变量 *)
@@ -65,31 +65,31 @@ Definition o2_GD : id := Id "o2_GD".
 
 (* 阵位变量 *)
 Definition P7 : id := Id "P7".
-Definition P16 : id := Id "P16".
+Definition P12 : id := Id "P12".
 
 (* 用于比较和判断的具体数值 *)
-Definition ZD1 : tuple4 := Triple4 129 26 0 1.
-Definition GD1 : tuple3 := Triple3 80 (large_to_nat 9060) (large_to_nat 9780).
-Definition JY1 : tuple3 := Triple3 80 (large_to_nat 9060) (large_to_nat 9780).  
-Definition JWJC1 : tuple3 := Triple3 80 (large_to_nat 9060) (large_to_nat 9660).     
-Definition GDDZ1 : tuple3 := Triple3 80 (large_to_nat 9060) (large_to_nat 9540). 
-Definition GRDZT1 : tuple3 := Triple3 80 (large_to_nat 8340) (large_to_nat 8940). 
-Definition NMWQZZ1 : tuple3 := Triple3 80 (large_to_nat 8340) (large_to_nat 9060).
+Definition ZD1 : tuple4 := Triple4 195 6 0 1.
+Definition GD1 : tuple3 := Triple3 80 (large_to_nat 8542) (large_to_nat 9262).
+Definition JY1 : tuple3 := Triple3 80 (large_to_nat 8542) (large_to_nat 9262).  
+Definition JWJC1 : tuple3 := Triple3 80 (large_to_nat 8542) (large_to_nat 9142).     
+Definition GDDZ1 : tuple3 := Triple3 80 (large_to_nat 8542) (large_to_nat 9022). 
+Definition GRDZT1 : tuple3 := Triple3 80 (large_to_nat 7822) (large_to_nat 8422). 
+Definition NMWQZZ1 : tuple3 := Triple3 80 (large_to_nat 7822) (large_to_nat 8542).
 
 Definition ZD2 : tuple4 := Triple4 262 26 1 1.
-Definition GD2 : tuple3 := Triple3 80 (large_to_nat 8940) (large_to_nat 9660).
-Definition JY2 : tuple3 := Triple3 80 (large_to_nat 8940) (large_to_nat 9660).  
-Definition JWJC2 : tuple3 := Triple3 80 (large_to_nat 8940) (large_to_nat 9540).     
-Definition GDDZ2 : tuple3 := Triple3 80 (large_to_nat 8940) (large_to_nat 9420). 
-Definition GRDZT2 : tuple3 := Triple3 80 (large_to_nat 8220) (large_to_nat 8820). 
-Definition NMWQZZ2 : tuple3 := Triple3 80 (large_to_nat 8220) (large_to_nat 8940). 
+Definition GD2 : tuple3 := Triple3 80 (large_to_nat 8662) (large_to_nat 9382).
+Definition JY2 : tuple3 := Triple3 80 (large_to_nat 8662) (large_to_nat 9382).  
+Definition JWJC2 : tuple3 := Triple3 80 (large_to_nat 8662) (large_to_nat 9262).     
+Definition GDDZ2 : tuple3 := Triple3 80 (large_to_nat 8662) (large_to_nat 9142). 
+Definition GRDZT2 : tuple3 := Triple3 80 (large_to_nat 7942) (large_to_nat 8542). 
+Definition NMWQZZ2 : tuple3 := Triple3 80 (large_to_nat 7942) (large_to_nat 8662). 
 
 Definition D1  : nat := 1. (* 歼35_3 供电 *)
 Definition D2  : nat := 1. (* 歼35_4 供电 *)
 Definition R_JYC_6  : nat := 1. (* 6号加油车 *)
-Definition R_JYC_17  : nat := 1. (* 17号加油车 *)
-Definition R_GDSB_12  : nat := 1. (* 12号惯导设备 *)
-Definition R_GDSB_13  : nat := 1. (* 13号惯导设备 *)
+Definition R_JYC_12  : nat := 1. (* 12号加油车 *)
+Definition R_GDSB_4  : nat := 1. (* 4号惯导设备 *)
+Definition R_GDSB_5  : nat := 1. (* 5号惯导设备 *)
 
 (*The definition of empty state*)
 Definition emp_sO : storeO :=
